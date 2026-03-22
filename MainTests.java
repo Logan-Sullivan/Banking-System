@@ -11,5 +11,4 @@ public class MainTests {
             Scanner scanner = new Scanner(new File("src/data.csv"));
         });
     }
-
 }
