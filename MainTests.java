@@ -5,6 +5,7 @@ import java.util.Scanner;
 import org.junit.*;
 
 public class MainTests {
+    //This test checks that the file exists
     @Test 
     public void testFileExists(){
         assertDoesNotThrow(() ->{
