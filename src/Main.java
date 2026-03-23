@@ -1,5 +1,9 @@
+package src;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -34,7 +38,30 @@ public class Main {
             System.out.println("File not found");
         }
 
+        // example of customer object to save the data
+        customer newCustomer = new customer();
+        newCustomer.customerId = "1001";
+        newCustomer.firstName = "John";
+        newCustomer.lastName = "Smith";
+
+        saveCustomerData(newCustomer);
+
+
     }
+
+    static void saveCustomerData(customer customerToSave){
+        String fileName = "customers.csv";
+        try {
+            FileWriter fileWriter = new FileWriter(fileName);
+            fileWriter.write(customerToSave.customerId + ","+ customerToSave.firstName+"," +customerToSave.lastName);
+            fileWriter.close();
+            System.out.println("Customer saved to file.");
+        } catch (Exception e) {
+            System.out.println("Error saving customer." + e.getMessage());
+        }
+    }
+
+
 }
 
 abstract class Account{
