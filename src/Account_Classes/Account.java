@@ -1,6 +1,7 @@
-package src;
+package Account_Classes;
+import User_Classes.*;
 
-abstract class Account{
+public abstract class Account{
     String accountNumber;
     private double balance;
     customer Owner;

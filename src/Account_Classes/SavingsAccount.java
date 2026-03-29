@@ -1,8 +1,7 @@
-package src;
-
+package Account_Classes;
 import java.util.UUID;
 
-class SavingsAccount extends Account{
+public class SavingsAccount extends Account{
     double intrestRate;
     String compoundFreq;
     boolean overdraftBackup;

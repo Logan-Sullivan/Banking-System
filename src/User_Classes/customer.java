@@ -1,13 +1,13 @@
-package src;
-
+package User_Classes;
+import Account_Classes.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class customer {
-    String customerId;
-    String firstName;
-    String lastName;
-    List<Account> accountList = new ArrayList<>();
+    public String customerId;
+    public String firstName;
+    public String lastName;
+    public List<Account> accountList = new ArrayList<>();
 
     public customer(String customerId, String firstName, String lastName){
         this.customerId = customerId;

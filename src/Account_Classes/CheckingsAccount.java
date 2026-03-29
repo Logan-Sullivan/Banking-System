@@ -1,9 +1,8 @@
-package src;
-
+package Account_Classes;
 import java.util.List;
 import java.util.UUID;
 
-class CheckingsAccount extends Account{
+public class CheckingsAccount extends Account{
     SavingsAccount overdraftProtAccount;
     List<Integer> stopPayments;
 
