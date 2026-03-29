@@ -1,5 +1,5 @@
-import User_Classes.*;
-import Account_Classes.*;
+package src;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -39,20 +39,13 @@ public class Main {
         }
 
         // example of customer object to save the data
-        customer newCustomer = new customer("1001", "John", "Smith");
-        SavingsAccount newSavings = new SavingsAccount(10, "Test", false, 1200.01);
-        CheckingsAccount newCheckings = new CheckingsAccount(null, 100);
-        SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
-        newCustomer.accountList.add(newCheckings);
-        newCustomer.accountList.add(newSavings);
-        System.out.println("----------Transferring first amount----------");
-        newCheckings.transfer(newSavings, 25);
-        System.out.println("----------Transfer over---------- \nsetting overdraft account, and overdrafting");
-        newCheckings.setOverdraftProtAccount(newSavings);
-        newCheckings.transfer(blankSavings, 76);
-
+        customer newCustomer = new customer();
+        newCustomer.customerId = "1001";
+        newCustomer.firstName = "John";
+        newCustomer.lastName = "Smith";
 
         saveCustomerData(newCustomer);
+
 
     }
 
@@ -67,4 +60,59 @@ public class Main {
             System.out.println("Error saving customer." + e.getMessage());
         }
     }
+
+
+}
+
+abstract class Account{
+    String accountNumber;
+    private double balance;
+    customer Owner;
+
+    public void deposit(double amount){
+        System.out.println("Successfully Deposited "+ amount);
+        System.out.print(this.balance);
+        this.balance += amount;
+        System.out.print(" → "+ this.balance+"\n");
+    }
+    public void withdraw(double amount){}
+    public double getBalance(){
+        return this.balance;
+    }
+}
+
+class SavingsAccount extends Account{
+    double intrestRate;
+    String compoundFreq;
+    boolean overdraftBackup;
+
+    public SavingsAccount(double intrestRate, String compoundFreq, boolean overdraftBackup,double balance){
+        this.intrestRate = intrestRate;
+        this.compoundFreq = compoundFreq;
+        this.overdraftBackup = overdraftBackup;
+        this.deposit(balance);
+    }
+
+    public void applyDailyInterest(){
+        System.out.println("Daily interest applied: " + this.getBalance());
+        this.deposit(this.getBalance()*intrestRate);
+        System.out.print(" → "+ this.getBalance() +"\n");
+    }
+
+    public void toggleOverdraftBackup(){
+        this.overdraftBackup = !this.overdraftBackup; // toggles between true and false
+        if (this.overdraftBackup) {
+            System.out.println("Account set as backup");
+        } else {
+            System.out.println("Account set as non-backup");
+        }
+    }
+
+}
+
+class customer{
+    String customerId;
+    String firstName;
+    String lastName;
+
 }
