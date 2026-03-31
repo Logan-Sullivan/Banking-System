@@ -1,5 +1,8 @@
-import User_Classes.*;
-import Account_Classes.*;
+package src;
+import src.User_Classes.*;
+import src.Account_Classes.*;
+import src.Utils.PrintUtil;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -39,32 +42,20 @@ public class Main {
         }
 
         // example of customer object to save the data
-        customer newCustomer = new customer("1001", "John", "Smith");
+        Customer newCustomer = new Customer("1001", "John", "Smith");
         SavingsAccount newSavings = new SavingsAccount(10, "Test", false, 1200.01);
         CheckingsAccount newCheckings = new CheckingsAccount(null, 100);
         SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
         newCustomer.accountList.add(newCheckings);
         newCustomer.accountList.add(newSavings);
+        String extraData = "";
+        PrintUtil.saveCustomerData(newCustomer, newSavings, extraData);
         System.out.println("----------Transferring first amount----------");
         newCheckings.transfer(newSavings, 25);
         System.out.println("----------Transfer over---------- \nsetting overdraft account, and overdrafting");
         newCheckings.setOverdraftProtAccount(newSavings);
         newCheckings.transfer(blankSavings, 76);
 
-
-        saveCustomerData(newCustomer);
-
     }
 
-    static void saveCustomerData(customer customerToSave){
-        String fileName = "customers.csv";
-        try {
-            FileWriter fileWriter = new FileWriter(fileName);
-            fileWriter.write(customerToSave.customerId + ","+ customerToSave.firstName+"," +customerToSave.lastName);
-            fileWriter.close();
-            System.out.println("Customer saved to file.");
-        } catch (Exception e) {
-            System.out.println("Error saving customer." + e.getMessage());
-        }
-    }
 }

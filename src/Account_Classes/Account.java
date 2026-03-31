@@ -1,10 +1,10 @@
-package Account_Classes;
-import User_Classes.*;
+package src.Account_Classes;
+import src.User_Classes.*;
 
 public abstract class Account{
-    String accountNumber;
+    public String accountNumber;
     private double balance;
-    customer Owner;
+    Customer Owner;
 
     public void deposit(double amount){
         System.out.println("Successfully Deposited "+ amount);
