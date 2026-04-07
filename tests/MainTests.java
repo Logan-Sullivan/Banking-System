@@ -28,6 +28,16 @@ public class MainTests {
         example.accountList.add(exampleSavings);
     }
     @Test
+    public void testDeposit(){
+        exampleChecking.deposit(500);
+        assertEquals(1500, exampleChecking.getBalance());
+    }
+    @Test
+    public void testWithdraw(){
+        exampleChecking.withdraw(1000);
+        assertEquals(0, exampleChecking.getBalance());
+    }
+    @Test
     public void testSetOverdraftProtection(){
         assertDoesNotThrow(() ->{
             exampleChecking.setOverdraftProtAccount(exampleSavings);
