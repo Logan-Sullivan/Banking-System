@@ -1,7 +1,6 @@
-package src;
-import src.User_Classes.*;
-import src.Account_Classes.*;
-import src.Utils.PrintUtil;
+import Account_Classes.*;
+import User_Classes.*;
+import Utils.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,39 +10,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        ArrayListManager<Customer> CustomerList = new ArrayListManager<>();
 
-        char[] SSN = new char[9];
-        char[] Address = new char[15];
-        char[] State = new char[2];
-        char[] Zip = new char[5];
-        char[] First = new char[10];
-        char[] Last = new char[10];
-
-        File file = new File("src/data.csv");
-        try (Scanner fileReader = new Scanner(file)){
-            while (fileReader.hasNextLine()){
-                String text = fileReader.nextLine();
-                String[] formattedText = text.split(",");
-                SSN = formattedText[0].toCharArray();
-                Address = formattedText[1].toCharArray();
-                State = formattedText[2].toCharArray();
-                Zip = formattedText[3].toCharArray();
-                First = formattedText[4].toCharArray();
-                Last = formattedText[5].toCharArray();
-
-                /*
-                * Here we would create the objects for accounts
-                *  with these values and add them to our arraylist
-                */
-                //arrayListManager.addAccount(Account, new Account(SSN,Address,State,Zip,First,Last));
-            }
-        } catch (FileNotFoundException e){
-            System.out.println("File not found");
-        }
-
+        fetchCustsFromCSV(CustomerList,"src/data.csv");
+        removeCustFromArrBySSN(CustomerList,"28733578");
         // example of customer object to save the data
-        Customer newCustomer = new Customer("1001", "John", "Smith");
-        SavingsAccount newSavings = new SavingsAccount(10, "Test", false, 1200.01);
+        writeToArrayToCsv(CustomerList,"src/data.csv");
+        Customer newCustomer = new Customer();
+        SavingsAccount newSavings = new SavingsAccount();
         CheckingsAccount newCheckings = new CheckingsAccount(null, 100);
         SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
         newCustomer.accountList.add(newCheckings);
@@ -56,6 +30,58 @@ public class Main {
         newCheckings.setOverdraftProtAccount(newSavings);
         newCheckings.transfer(blankSavings, 76);
 
+    }
+    public static void writeToArrayToCsv(ArrayListManager<Customer> CustomerList, String fileName){
+        try{
+            FileWriter Writer = new FileWriter(fileName);
+            for (int i = 0; i < CustomerList.getMcount(); i++) {
+                 Writer.write(CustomerList.getValue(i).LineForCSV());
+            }
+            Writer.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void removeCustFromArrBySSN(ArrayListManager<Customer> CustomerList, String SSN){
+        try{
+            for(int i = 0; i < CustomerList.getMcount(); i++){
+                if (CustomerList.getValue(i).customerId.equals(SSN)) {
+                    System.out.println("Removing " + CustomerList.getValue(i).firstName + " " + CustomerList.getValue(i).lastName);
+                    CustomerList.removeM(i);
+                    return;
+                }
+
+            }
+        } catch (Exception e){
+            System.out.println("An error occurred.");
+        }
+        System.out.println("cust not found");
+    }
+
+    public static void fetchCustsFromCSV(ArrayListManager<Customer> CustomerList, String fileName){
+        String SSN,Address,City,State,Zip,First,Last;
+
+        File file = new File("src/data.csv");
+        try (Scanner fileReader = new Scanner(file)){
+            while (fileReader.hasNextLine()){
+                String text = fileReader.nextLine();
+                String[] formattedText = text.split(",");
+                SSN = formattedText[0];
+                Address = formattedText[1];
+                City = formattedText[2];
+                State = formattedText[3];
+                Zip = formattedText[4];
+                First = formattedText[5];
+                Last = formattedText[6];
+                CustomerList.addInOrder(new Customer(SSN,Address,City,State,Zip,First,Last));
+
+            }
+        } catch (FileNotFoundException e){
+            System.out.println("File not found");
+        }
     }
 
 }

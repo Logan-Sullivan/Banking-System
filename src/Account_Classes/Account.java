@@ -1,8 +1,10 @@
-package src.Account_Classes;
-import src.User_Classes.*;
+package Account_Classes;
+import User_Classes.*;
+
+import java.util.UUID;
 
 public abstract class Account{
-    public String accountNumber;
+    public String accountNumber = UUID.randomUUID().toString();
     private double balance;
     Customer Owner;
 
