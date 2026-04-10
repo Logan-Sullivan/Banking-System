@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="SystemControllerController"
+      alignment="CENTER">
+
+    <padding>
+        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+    </padding>
+
+    <Label text="Banking System Controller" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+
+    <VBox spacing="12.0" maxWidth="300.0">
+        <Button text="Check Point" prefWidth="260.0" onAction="#goToCheckPoint"/>
+        <Button text="Load Basic Data" prefWidth="260.0" onAction="#goToLoadBasicData"/>
+        <Button text="Run Simple Regression Tests" prefWidth="260.0" onAction="#goToRunSimpleRegressionTests"/>
+    </VBox>
+
+    <Label text="Select Actor Screen" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+    <HBox spacing="15.0" alignment="CENTER">
+        <Button text="Teller Screen" prefWidth="150.0" onAction="#goToTellerScreen"/>
+        <Button text="Manager Screen" prefWidth="150.0" onAction="#goToManagerScreen"/>
+        <Button text="Customer Screen" prefWidth="150.0" onAction="#goToCustomerScreen"/>
+    </HBox>
+
+    <Label text="All actor screens return to the System Controller." style="-fx-font-size: 12px;" />
+</VBox>

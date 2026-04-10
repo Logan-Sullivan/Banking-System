@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="18.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="TellerScreenController"
+      alignment="CENTER">
+    <padding>
+        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+    </padding>
+
+    <Label text="Teller Screen" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+
+    <VBox spacing="12.0" maxWidth="320.0">
+        <Button text="Create New Account"
+                prefWidth="280.0"
+                onAction="#goToCreateNewAccount" />
+        <Button text="Create New Customer"
+                prefWidth="280.0"
+                onAction="#goToCreateNewCustomer" />
+        <Button text="Link Accounts"
+                prefWidth="280.0"
+                onAction="#goToLinkAccounts" />
+        <Button text="Withdraw from Account"
+                prefWidth="280.0"
+                onAction="#goToWithdrawFromAccount" />
+        <Button text="Stop Payment"
+                prefWidth="280.0"
+                onAction="#goToStopPayment" />
+        <Button text="Review Customer Accounts"
+                prefWidth="280.0"
+                onAction="#goToReviewCustomerAccounts" />
+    </VBox>
+
+    <Button text="Return to System Controller"
+            prefWidth="220.0"
+            onAction="#returnToSystemController" />
+
+    <Label text="All teller action screens return to the Teller Screen." style="-fx-font-size: 12px;" />
+</VBox>
