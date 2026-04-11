@@ -8,7 +8,6 @@ public abstract class CheckingsAccount extends Account{
     int checkNum = 0;
     double minimumBalance;
 
-
     public CheckingsAccount(SavingsAccount overdraftAccount, double balance){
         this.accountNumber = UUID.randomUUID().toString();
         this.overdraftProtAccount = overdraftAccount;
@@ -56,5 +55,4 @@ public abstract class CheckingsAccount extends Account{
     public SavingsAccount getOverdraftProtAccount() {
         return overdraftProtAccount;
     }
-
 }

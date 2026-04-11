@@ -1,6 +1,5 @@
 package Account_Classes;
 import User_Classes.*;
-
 import java.util.UUID;
 
 public abstract class Account{

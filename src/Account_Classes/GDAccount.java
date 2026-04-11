@@ -21,7 +21,7 @@ public class GDAccount extends CheckingsAccount {
 
     public void checkMinBalance(){
 
-    } // CS: Sorry, not a clue what this is for? is it just if balance is lower than minimum? or returning minimum?
+    } // CS: Sorry not a clue what this is for? is it just if balance is lower than minimum? or returning minimum?
 
     public void chargeBelowMinFee(double tsFee){
         if (this.getBalance() < minimumBalance) this.withdraw(tsFee);
