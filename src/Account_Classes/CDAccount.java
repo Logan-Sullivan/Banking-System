@@ -2,7 +2,7 @@ package Account_Classes;
 
 import java.util.Date;
 
-public class CDAccount extends SavingsAccount { // Will change this all if need be
+public class CDAccount extends Account { // Will change this all if need be
     public double fixedRate;
     public Date maturityDate;
     public double earlyPenalty;
