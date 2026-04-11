@@ -16,7 +16,7 @@ public class ArrayListManager<T extends Comparable>{
         return mcount;
     }//end of addAtEnd
 
-    public int getMcount() {
+    public int getMcount(){
         return mcount;
     }//end of getMcount
 
