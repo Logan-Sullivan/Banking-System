@@ -12,5 +12,5 @@ public abstract class Loan {
         this.balance = this.balance - amount;
         System.out.println("Balance is now " + this.balance);
     }
-
+    public double getBalance(){return balance;}
 }

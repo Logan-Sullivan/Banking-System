@@ -9,6 +9,8 @@ import org.junit.*;
 import org.junit.jupiter.api.BeforeEach;
 import Account_Classes.CheckingsAccount;
 import Account_Classes.SavingsAccount;
+import User_Classes.Customer;
+
 
 public class MainTests {
     //This test checks that the file exists
@@ -17,5 +19,17 @@ public class MainTests {
         assertDoesNotThrow(() ->{
             Scanner scanner = new Scanner(new File("src/data.csv"));
         });
+    }
+    @Test
+    public void testCreateExampleCustomer(){
+        assertDoesNotThrow(() ->{
+            ArrayList<Customer> custList = new ArrayList<Customer>();
+            custList.add(new Customer());
+            String[] args = {};
+        });
+    }
+    @Test
+    public void testCreateExampleAccounts(){
+        
     }
 }
