@@ -7,9 +7,8 @@ public class CDAccount extends Account {
     public Date maturityDate;
     public double earlyPenalty;
 
-    public CDAccount(double intrestRate, String compoundFreq, boolean overdraftBackup,
-                     double balance, double fixedRate, Date maturityDate, double earlyPenalty){
-        super(intrestRate, compoundFreq, false, balance);
+    public CDAccount(double balance, double fixedRate, Date maturityDate, double earlyPenalty){
+        this.deposit(balance);
         this.fixedRate = fixedRate;
         this.maturityDate = maturityDate;
         this.earlyPenalty = earlyPenalty;
