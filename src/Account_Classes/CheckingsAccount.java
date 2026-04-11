@@ -2,34 +2,20 @@ package Account_Classes;
 import java.util.List;
 import java.util.UUID;
 
-public class CheckingsAccount extends Account{
+public abstract class CheckingsAccount extends Account{
     SavingsAccount overdraftProtAccount;
-    List<Integer> stopPayments;
-    SavingsAccount interestAccount;
-    private Type type;
-    double txFee = 0.75;
-    double monthlyFee = 1.25;
-    double minimumBalance  = 5000.0;
-    private double interestRate;
-    enum Type{
-        ThatsMyBank,
-        GoldDiamond
-    }
+    List<Integer> monthlyPayments;
+    int checkNum = 0;
+    double minimumBalance;
 
-    public CheckingsAccount(SavingsAccount overdraftAccount, Type type, double balance){
-        this.accountNumber = UUID.randomUUID().toString();
-        this.type = type;
-        this.overdraftProtAccount = overdraftAccount;
-        this.deposit(balance);
-    }
+
     public CheckingsAccount(SavingsAccount overdraftAccount, double balance){
         this.accountNumber = UUID.randomUUID().toString();
-        this.type = Type.ThatsMyBank;
         this.overdraftProtAccount = overdraftAccount;
         this.deposit(balance);
     }
 
-    public void stopPayment(){
+    public void stopPayment(int checknumber){
 
     }
 
@@ -46,8 +32,6 @@ public class CheckingsAccount extends Account{
 
     public void transfer(Account account, double amount){
         this.withdraw(amount);
-        if (type == Type.ThatsMyBank || this.getBalance() < minimumBalance)
-            this.withdraw(txFee);
         account.deposit(amount);
         this.handleOverdraft();
         System.out.println("Transfers " + amount + " to account " + account.accountNumber);
@@ -55,20 +39,13 @@ public class CheckingsAccount extends Account{
 
     public void makeMonthlyTransfer(Account account, double amount){
         this.withdraw(amount);
-        if (type == Type.ThatsMyBank || this.getBalance() < minimumBalance)
-            this.withdraw(monthlyFee);
         account.deposit(amount);
         this.handleOverdraft();
         System.out.println("Monthly Transfer " + amount + " made to account " + account.accountNumber);
-    } // CS: Probably a better way to do this, by just calling transfer and changing the fee.
+    } // CS: same thing, just called monthly, could be done way better, but separated
 
-    public void setInterestAccount(SavingsAccount account){
-        this.interestAccount = account;
-    }
-    public void applyInterest(){
-        if (type == Type.GoldDiamond){
-            this.interestRate = 0.5 * interestAccount.getBalance();
-        } else System.out.println("Wrong account Type");
+    public boolean requestFeeWaiver(double checkAmt){
+        return this.getBalance() - checkAmt >= 5000.0;
     }
 
     public void setOverdraftProtAccount(SavingsAccount overdraftProtAccount) {
@@ -79,4 +56,5 @@ public class CheckingsAccount extends Account{
     public SavingsAccount getOverdraftProtAccount() {
         return overdraftProtAccount;
     }
+
 }
