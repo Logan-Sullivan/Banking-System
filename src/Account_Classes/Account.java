@@ -1,6 +1,5 @@
 package Account_Classes;
 import User_Classes.*;
-
 import java.util.UUID;
 
 public abstract class Account{
@@ -9,13 +8,24 @@ public abstract class Account{
     Customer Owner;
 
     public void deposit(double amount){
-        System.out.println("Successfully Deposited "+ amount);
-        System.out.print(this.balance);
-        this.balance += amount;
-        System.out.print(" → "+ this.balance+"\n");
+        if (amount <=0)
+            System.out.println("Denied, Non-value");
+        else {
+            System.out.println("Successfully Deposited " + amount);
+            System.out.print(this.balance);
+            this.balance += amount;
+            System.out.print(" → " + this.balance + "\n");
+        }
     }
     public void withdraw(double amount){
-        this.balance -= amount; // CS: just put this in temporarily to test transfer cause I didn't realize this didn't do anyhting
+        if (amount <=0)
+            System.out.println("Denied, Non-value");
+        else{
+            System.out.println("Successfully Withdrew " + amount);
+            System.out.print(this.balance);
+            this.balance -= amount;
+            System.out.print(" → " + this.balance + "\n");
+        }
     }
     public double getBalance(){
         return this.balance;

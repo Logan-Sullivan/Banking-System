@@ -2,16 +2,19 @@ package Account_Classes;
 import java.util.List;
 import java.util.UUID;
 
-public class CheckingsAccount extends Account{
+public abstract class CheckingsAccount extends Account{
     SavingsAccount overdraftProtAccount;
-    List<Integer> stopPayments;
+    List<Integer> monthlyPayments;
+    int checkNum = 0;
+    double minimumBalance;
 
     public CheckingsAccount(SavingsAccount overdraftAccount, double balance){
         this.accountNumber = UUID.randomUUID().toString();
         this.overdraftProtAccount = overdraftAccount;
         this.deposit(balance);
     }
-    public void stopPayment(){
+
+    public void stopPayment(int checknumber){
 
     }
 
@@ -26,11 +29,22 @@ public class CheckingsAccount extends Account{
         } // Charge overdraft fee, if not below zero, who cares.
     }
 
-    public void transfer(Account account, double amount){ // CS: could probably make it a fromAccount, toAccount
+    public void transfer(Account account, double amount){
         this.withdraw(amount);
         account.deposit(amount);
         this.handleOverdraft();
         System.out.println("Transfers " + amount + " to account " + account.accountNumber);
+    }
+
+    public void makeMonthlyTransfer(Account account, double amount){
+        this.withdraw(amount);
+        account.deposit(amount);
+        this.handleOverdraft();
+        System.out.println("Monthly Transfer " + amount + " made to account " + account.accountNumber);
+    } // CS: same thing, just called monthly, could be done way better, but separated
+
+    public boolean requestFeeWaiver(double checkAmt){
+        return this.getBalance() - checkAmt >= 5000.0;
     }
 
     public void setOverdraftProtAccount(SavingsAccount overdraftProtAccount) {
