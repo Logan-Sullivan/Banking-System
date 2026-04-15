@@ -17,6 +17,7 @@ public abstract class Account{
     public void withdraw(double amount){
         this.balance -= amount; // CS: just put this in temporarily to test transfer cause I didn't realize this didn't do anyhting
     }
+
     public double getBalance(){
         return this.balance;
     }

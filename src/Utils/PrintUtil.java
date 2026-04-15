@@ -2,12 +2,11 @@ package Utils;
 import Account_Classes.*;
 import User_Classes.*;
 import java.io.FileWriter;
-import java.io.IOException;
 
 public class PrintUtil {
 
     public static void saveCustomerData(Customer customer, Account account, String extraData) {
-        String fileName = "customers.csv";
+        String fileName = "User_Classes/customers.csv";
 
         try {
             FileWriter writer = new FileWriter(fileName);

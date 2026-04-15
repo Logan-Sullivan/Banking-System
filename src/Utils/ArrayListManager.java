@@ -1,6 +1,11 @@
 package Utils;
 
+import User_Classes.Customer;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ArrayListManager<T extends Comparable>{
 

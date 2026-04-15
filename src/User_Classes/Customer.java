@@ -5,7 +5,8 @@ import java.util.List;
 
 public class Customer implements Comparable {
     public String customerId,address,city,state,zipcode,firstName,lastName;
-    public List<Account> accountList = new ArrayList<>();
+    public List<SavingsAccount> savingsAccountList = new ArrayList<>();
+    public List<CheckingsAccount> checkingsAccountList = new ArrayList<>();
 
     public Customer(){
         this.customerId = (int)(Math.random()*100000000)+"";
@@ -30,6 +31,13 @@ public class Customer implements Comparable {
 
     public String LineForCSV(){
         return this.customerId+","+this.address+","+this.city+","+this.state+","+this.zipcode+","+this.firstName+","+this.lastName+"\n";
+    }
+    public String AccountForCSV(List list){
+        String accounts="";
+        for (Account account : list) {
+            accounts += this.customerId + "," + account.toString() + "\n";
+        }
+        return accounts;
     }
     //for arraylist sorts customers by last name
     @Override

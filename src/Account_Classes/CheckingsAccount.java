@@ -6,11 +6,20 @@ public class CheckingsAccount extends Account{
     SavingsAccount overdraftProtAccount;
     List<Integer> stopPayments;
 
-    public CheckingsAccount(SavingsAccount overdraftAccount, double balance){
+//,SavingsAccount overdraftAccount
+    public CheckingsAccount(double balance){
         this.accountNumber = UUID.randomUUID().toString();
-        this.overdraftProtAccount = overdraftAccount;
+        //this.overdraftProtAccount = overdraftAccount;
         this.deposit(balance);
     }
+
+    //constructor for writing from csv
+    public CheckingsAccount(String accountNumber,double balance){
+        this.accountNumber = accountNumber;
+        this.deposit(balance);
+        this.overdraftProtAccount = null;
+    }
+
     public void stopPayment(){
 
     }
@@ -36,6 +45,11 @@ public class CheckingsAccount extends Account{
     public void setOverdraftProtAccount(SavingsAccount overdraftProtAccount) {
         this.overdraftProtAccount = overdraftProtAccount;
         overdraftProtAccount.toggleOverdraftBackup();
+    }
+
+    @Override
+    public String toString() {
+        return this.accountNumber+","+this.getBalance();
     }
 
     public SavingsAccount getOverdraftProtAccount() {

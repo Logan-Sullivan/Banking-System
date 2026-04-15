@@ -17,7 +17,7 @@ public class MainTests {
     @Test 
     public void testCSVFileExists(){
         assertDoesNotThrow(() ->{
-            Scanner scanner = new Scanner(new File("src/data.csv"));
+            Scanner scanner = new Scanner(new File("src/User_Classes/customers.csv"));
         });
     }
     @Test
