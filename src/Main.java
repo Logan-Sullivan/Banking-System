@@ -18,7 +18,7 @@ public class Main {
         writeToArrayToCsv(CustomerList,"src/data.csv");
         Customer newCustomer = new Customer();
         SavingsAccount newSavings = new SavingsAccount();
-        CheckingsAccount newCheckings = new CheckingsAccount(null, 100);
+        TMBAccount newCheckings = new TMBAccount(null, 100);
         SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
         newCustomer.accountList.add(newCheckings);
         newCustomer.accountList.add(newSavings);

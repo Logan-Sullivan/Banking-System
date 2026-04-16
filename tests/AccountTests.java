@@ -9,10 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 
 import Account_Classes.CheckingsAccount;
 import Account_Classes.SavingsAccount;
+import Account_Classes.TMBAccount;
 public class AccountTests {
     //Now we create some example accounts for an example customer for the tests
     User_Classes.Customer example = new User_Classes.Customer();
-    CheckingsAccount exampleChecking=new CheckingsAccount(null, 1000);
+    TMBAccount exampleChecking=new TMBAccount(null, 1000);
     SavingsAccount exampleSavings=new SavingsAccount(0.25, "Daily", false, 2000);
     @BeforeEach
     public void setUpExampleCust(){
