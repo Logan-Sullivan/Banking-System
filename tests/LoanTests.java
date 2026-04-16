@@ -58,6 +58,7 @@ public class LoanTests {
         assertFalse(exampleCard.authorizeCharge(400));
     }
     //This test ensures that the apply interest function returns the expected value
+    //Currently fails because The List of credit card is not an ArrayList, and is not initialized on creation
     @Test
     public void testApplyInterest(){
         CreditCard exampleCard = new CreditCard(50, 25, 0, "none", false, 300.0);
