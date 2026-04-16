@@ -3,8 +3,8 @@ import Utils.AppState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,16 +12,33 @@ import javafx.stage.Stage;
 public class ReviewCustomerAccountsController {
 
     @FXML
-    private TextField customerIdField;
+    private ComboBox<String> customerIdComboBox;
 
     @FXML
     private Label statusLabel;
 
     @FXML
+    public void initialize() {
+        if (customerIdComboBox == null) return;
+
+        customerIdComboBox.getItems().clear();
+
+        if (AppState.customers != null) {
+            for (int i = 0; i < AppState.customers.getMcount(); i++) {
+                Customer c = AppState.customers.getValue(i);
+                if (c != null && c.customerId != null && !c.customerId.isBlank()) {
+                    customerIdComboBox.getItems().add(c.customerId);
+                }
+            }
+        }
+    }
+
+    @FXML
     private void searchAccounts(ActionEvent event) {
-        String customerId = customerIdField == null ? "" : customerIdField.getText();
+        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+
         if (customerId == null || customerId.isBlank()) {
-            if (statusLabel != null) statusLabel.setText("Enter a Customer ID.");
+            if (statusLabel != null) statusLabel.setText("Select a Customer ID.");
             return;
         }
 
@@ -34,7 +51,9 @@ public class ReviewCustomerAccountsController {
             Customer c = AppState.customers.getValue(i);
             if (c != null && customerId.equals(c.customerId)) {
                 int accounts = c.accountList == null ? 0 : c.accountList.size();
-                if (statusLabel != null) statusLabel.setText("Found: " + c.firstName + " " + c.lastName + " | Accounts: " + accounts);
+                if (statusLabel != null) {
+                    statusLabel.setText("Found: " + c.firstName + " " + c.lastName + " | Accounts: " + accounts);
+                }
                 return;
             }
         }

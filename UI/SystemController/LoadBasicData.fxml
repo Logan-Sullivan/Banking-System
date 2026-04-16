@@ -15,6 +15,7 @@
         <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
     </padding>
 
+<<<<<<< checkingAccountUIFunctionality
     <Label text="Load Basic Data" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
     <VBox spacing="10.0" maxWidth="360.0">
@@ -39,3 +40,32 @@
     <Label fx:id="statusLabel" text="Ready." style="-fx-font-size: 12px;" />
     <Label text="Load core banking data before running the system." style="-fx-font-size: 12px;" />
 </VBox>
+=======
+    <Label text="Load Basic Data" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+
+    <VBox spacing="10.0" maxWidth="360.0">
+        <Label text="Customer Data File" />
+        <TextField fx:id="dataSourceField" text="src/data.csv" promptText="Enter customer data file path" prefWidth="300.0" />
+
+        <Label text="Savings / CD Data File" />
+        <TextField fx:id="savingsDataField" promptText="Enter savings / CD data file path" prefWidth="300.0" />
+
+        <Label text="Checking Data File" />
+        <TextField fx:id="checkingDataField" promptText="Enter checking data file path" prefWidth="300.0" />
+
+        <Label text="Loan Data File" />
+        <TextField fx:id="loanDataField" promptText="Enter loan data file path" prefWidth="300.0" />
+    </VBox>
+
+    <VBox spacing="12.0" alignment="CENTER">
+        <Button text="Load Data" prefWidth="180.0" onAction="#loadData" />
+        <Button text="Validate Data" prefWidth="180.0" onAction="#validateData" />
+        <Button text="Return to System Controller"
+                prefWidth="180.0"
+                onAction="#returnToSystemController" />
+    </VBox>
+
+    <Label fx:id="statusLabel" text="Ready." style="-fx-font-size: 12px;" />
+    <Label text="Load core banking data before running the system." style="-fx-font-size: 12px;" />
+</VBox>
+>>>>>>> prototypeBranch
