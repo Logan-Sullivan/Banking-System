@@ -64,7 +64,7 @@ public class Main {
     public static void fetchCustsFromCSV(ArrayListManager<Customer> CustomerList, String fileName){
         String SSN,Address,City,State,Zip,First,Last;
 
-        File file = new File("src/data.csv");
+        File file = new File(fileName);
         try (Scanner fileReader = new Scanner(file)){
             while (fileReader.hasNextLine()){
                 String text = fileReader.nextLine();
