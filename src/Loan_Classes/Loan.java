@@ -7,6 +7,8 @@ public abstract class Loan {
     boolean isProblemAccount = false;
     String LoanStatus;
     LocalDate dueDate;
+    LocalDate dateNotifiedOfPayment;
+    LocalDate dateSinceLastPayment;
 
     public void makePayment(double amount){
         this.balance = this.balance - amount;
