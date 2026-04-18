@@ -19,7 +19,8 @@ public abstract class TermBasedLoan extends Loan{
                 ( (principal*monthlyRate) * ( Math.pow(1+monthlyRate,this.term) ) ) )
                 /( 1+( Math.pow(1+monthlyRate,this.term)-1 ) );
 
-        this.balance = monthlyPayment*this.term;
+        this.currentPaymentDue = monthlyPayment*this.term;
+        this.principal = principal - (monthlyPayment-monthlyRate);//This is the leftover amount from the payment
     }
 
     public void flagIfMissed(){
@@ -30,8 +31,13 @@ public abstract class TermBasedLoan extends Loan{
         this.isProblemAccount = false;
     }
 
+    /**
+     * This function applies a late fee if the loan has not been paid by its due date
+     */
     public void applyLateFee(){
-        this.balance = balance + lateFee;
+        if(LocalDate.now().compareTo(dueDate)>0){
+            this.currentPaymentDue = currentPaymentDue + lateFee;
+        }
     }
 
 
