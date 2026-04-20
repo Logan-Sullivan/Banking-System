@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="696.0" prefWidth="340.0" spacing="18.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CreateNewAccountController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Create New Account" />
+
+    <VBox maxWidth="320.0" prefHeight="421.0" prefWidth="280.0" spacing="10.0">
+        <Label text="Customer ID" />
+        <ComboBox fx:id="customerIdComboBox"
+                  prefWidth="280.0"
+                  promptText="Select customer ID" />
+
+        <Label text="Account Number" />
+        <TextField fx:id="accountNumberField" prefWidth="280.0" promptText="Enter account number" />
+
+        <Label text="Account Type" />
+        <ComboBox fx:id="accountTypeCombo" onAction="#onAccountTypeChosen" prefWidth="280.0">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Savings Account" />
+                    <String fx:value="Gold Diamond Checking Account" />
+                    <String fx:value="That's My Bank Checking Account" />
+                    <String fx:value="CD Account" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Label fx:id="interestRateLabel" text="Interest Rate" visible="false" />
+        <TextField fx:id="interestRateField" prefWidth="280.0" promptText="Enter interest rate" visible="false" />
+        <Label fx:id="compoundFrequencyLabel" text="Compound Frequency" visible="false" />
+        <TextField fx:id="compoundFrequencyField" layoutX="10.0" layoutY="223.0" prefWidth="280.0" promptText="Enter initial deposit" visible="false" />
+        <CheckBox fx:id="flexibleRateCheck" mnemonicParsing="false" text="Flexible Rate?" visible="false" />
+
+        <Label text="Initial Deposit" />
+        <TextField fx:id="initialDepositField" prefWidth="280.0" promptText="Enter initial deposit" />
+        <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="BOTTOM" text="Label" textAlignment="CENTER" visible="false" />
+    </VBox>
+
+    <VBox alignment="CENTER" spacing="12.0">
+        <Button onAction="#createAccountPressed" prefWidth="180.0" text="Create Account" />
+        <Button onAction="#returnToTellerScreen" prefWidth="180.0" text="Return to Teller Screen" />
+    </VBox>
+
+    <Label style="-fx-font-size: 12px;" text="After creation, return to the Teller Screen." />
+</VBox>

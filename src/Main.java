@@ -18,7 +18,7 @@ public class Main {
         writeToArrayToCsv(CustomerList,"src/data.csv");
         Customer newCustomer = new Customer();
         SavingsAccount newSavings = new SavingsAccount();
-        CheckingsAccount newCheckings = new CheckingsAccount(null, 100);
+        TMBAccount newCheckings = new TMBAccount(null, 100);
         SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
         newCustomer.accountList.add(newCheckings);
         newCustomer.accountList.add(newSavings);
@@ -64,7 +64,7 @@ public class Main {
     public static void fetchCustsFromCSV(ArrayListManager<Customer> CustomerList, String fileName){
         String SSN,Address,City,State,Zip,First,Last;
 
-        File file = new File("src/data.csv");
+        File file = new File(fileName);
         try (Scanner fileReader = new Scanner(file)){
             while (fileReader.hasNextLine()){
                 String text = fileReader.nextLine();
