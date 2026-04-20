@@ -12,22 +12,24 @@ public class CreditCard extends Loan {
     double averageDue;
     double financeCharge = 0.0;
 
-    public CreditCard(double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit) {
+    //I'm not going to put the starting balance as the principal, because the credit card balance is expected to flucuate as it is used
+    public CreditCard(double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit, LocalDate dateCreated) {
         this.currentPaymentDue = currentPaymentDue;
         this.interest_rate = interest_rate;
         LoanStatus = loanStatus;
         this.isProblemAccount = isProblemAccount;
         this.creditLimit = creditLimit;
-        this.dueDate = LocalDate.now().plusMonths(1).withDayOfMonth(10);
+        this.loanRepaymentDate = dateCreated.plusMonths(1).withDayOfMonth(10);
         this.averageDue = currentPaymentDue;
+        this.dateSinceLastBalanceChange = dateCreated;
     }
 
 
     /**
      * checks if charge being made would exceed credit limit if it does return false otherwise return true
      * */
-    public boolean authorizeCharge(double Charge){
-        if(Charge + this.currentPaymentDue>this.creditLimit){
+    public boolean authorizeCharge(double charge){
+        if(charge + this.currentPaymentDue>this.creditLimit){
             System.out.println("Insufficient funds!");
             return false;
         } else return true;
@@ -38,14 +40,13 @@ public class CreditCard extends Loan {
      * If there is charges on the card, then it creates a bill of both the charges and a finance charge
      * The finance charge is calculated as the average amount of charge on the credit card for the month
      */
-    public void generateBill(){
-        if(LocalDate.now().getDayOfMonth()==1){
-            if(currentPaymentDue>0){
-                averageDue += currentPaymentDue * (LocalDate.now().toEpochDay()-dateSinceLastPayment.toEpochDay());
+    public void generateBill(LocalDate currentDay){
+        if(currentDay.getDayOfMonth()==1){
+            if(currentPaymentDue>0 && dateSinceLastBalanceChange != null){
+                averageDue += currentPaymentDue * (currentDay.toEpochDay()-dateSinceLastBalanceChange.toEpochDay()-1);
                 //Now for a bit of a monster of a line: this calculates the finance charge, which is the average amount of charge of the credit card for the month
                 //This line takes the total amounts over all of the days and divides it by the number of days of the previous month
-                financeCharge = averageDue/(LocalDate.of(LocalDate.now().getYear(), LocalDate.now().minusMonths(1).getMonth(), 1).getMonth().length(LocalDate.now().isLeapYear()));
-                currentPaymentDue += financeCharge;
+                financeCharge = averageDue/(LocalDate.of(currentDay.getYear(), currentDay.minusMonths(1).getMonth(), 1).getMonth().length(currentDay.isLeapYear()));
             }else{
                 averageDue = 0.0;
             }
@@ -54,6 +55,15 @@ public class CreditCard extends Loan {
         }
     }
 
+    /**
+     * This function checks if the bill has not been paid by the 10th of this month. This funciton is primarily for testing/presentation
+     * @param currentDate the current date
+     */
+    public void checkBillStatus(LocalDate currentDate){
+        if(currentDate.getDayOfMonth()>=10 && financeCharge > 0){
+            isProblemAccount = true;
+        }
+    }
     /**
      * This function checks if the bill has not been paid by the 10th of the month (Or later if someone forgets)
      * If so, it marks this card as a problem account
@@ -76,7 +86,8 @@ public class CreditCard extends Loan {
     @Override
     public double makePayment(double amount) {
         this.transactions.add(new Transaction(amount, transactions.size(), "Balance Payment"));
-        averageDue += currentPaymentDue * (LocalDate.now().toEpochDay()-dateSinceLastPayment.toEpochDay());
+        averageDue += currentPaymentDue * (LocalDate.now().toEpochDay()-dateSinceLastBalanceChange.toEpochDay());
+        dateSinceLastBalanceChange = LocalDate.now();
         if(amount>financeCharge){
             amount -= financeCharge;
             financeCharge = 0;
@@ -87,13 +98,51 @@ public class CreditCard extends Loan {
         }
     }
     /**
-     * First authorizes charge then generates a transaction to add to our transaction list
-     * */
+     * Makes a transaction for our payment. This function is for testing/presentation, as it treats it as if it is the passed day
+     */
+    public double makePayment(double amount, LocalDate currentDate) {
+        this.transactions.add(new Transaction(amount, transactions.size(), "Balance Payment"));
+        averageDue += currentPaymentDue * (currentDate.toEpochDay()-dateSinceLastBalanceChange.toEpochDay());
+        dateSinceLastBalanceChange = currentDate;
+        if(amount>financeCharge){
+            amount -= financeCharge;
+            financeCharge = 0;
+            return super.makePayment(amount, currentDate);
+        }else{
+            financeCharge -= amount;
+            return 0;
+        }
+    }
+    /**
+     * This function makes a transaction for the card being used for a payment
+     * @param amount the amount of money to be charged to the card
+     * @param TransactionDesc the description for the transaction
+     */
     public void makeTransaction(double amount,String TransactionDesc){
          if (authorizeCharge(amount)){
+            averageDue += currentPaymentDue * (LocalDate.now().toEpochDay()-dateSinceLastBalanceChange.toEpochDay());
+            dateSinceLastBalanceChange = LocalDate.now();
             this.currentPaymentDue = currentPaymentDue + amount;
             this.transactions.add(new Transaction(amount,transactions.size(),TransactionDesc));
             System.out.println("New Balance: "+this.currentPaymentDue);
          }
+    }
+    /**
+     * See above, except the current date is passed to the function. Primarily for testing/presentation
+     * @param amount the amount of money charged to the card
+     * @param TransactionDesc the description for the transaction
+     * @param transactionDate the date that this is occuring
+     */
+    public void makeTransaction(double amount,String TransactionDesc, LocalDate transactionDate){
+         if (authorizeCharge(amount)){
+            averageDue += currentPaymentDue * (transactionDate.toEpochDay()-dateSinceLastBalanceChange.toEpochDay());
+            dateSinceLastBalanceChange = transactionDate;
+            this.currentPaymentDue = currentPaymentDue + amount;
+            this.transactions.add(new Transaction(amount,transactions.size(),TransactionDesc));
+            System.out.println("New Balance: "+this.currentPaymentDue);
+         }
+    }
+    public double getFinanceCharge(){
+        return financeCharge;
     }
 }
