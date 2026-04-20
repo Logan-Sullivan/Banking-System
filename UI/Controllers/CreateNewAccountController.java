@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+import User_Classes.Customer;
 import Utils.AppState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,13 +33,29 @@ public class CreateNewAccountController {
     @FXML
     private CheckBox flexibleRateCheck;
     @FXML
-    private TextField customerIdField;
+    private ComboBox<String> customerIdComboBox;
     @FXML
     private TextField accountNumberField;
     @FXML
     private Label statusLabel;
     @FXML
     private TextField initialDepositField;
+
+    @FXML
+    public void initialize() {
+        if (customerIdComboBox == null) return;
+
+        customerIdComboBox.getItems().clear();
+
+        if (AppState.customers != null) {
+            for (int i = 0; i < AppState.customers.getMcount(); i++) {
+                Customer c = AppState.customers.getValue(i);
+                if (c != null && c.customerId != null && !c.customerId.isBlank()) {
+                    customerIdComboBox.getItems().add(c.customerId);
+                }
+            }
+        }
+    }
 
     @FXML
     private void returnToTellerScreen(ActionEvent event) {
@@ -94,7 +111,7 @@ public class CreateNewAccountController {
      */
     @FXML
     private void createAccountPressed(ActionEvent event){
-        String customerID = customerIdField == null ? "" : customerIdField.getText();
+        String customerID = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
         String accountNumber = accountNumberField == null ? "" : accountNumberField.getText();
         double interestRate = 0.0;
         String compoundFrequency = "";
@@ -126,17 +143,17 @@ public class CreateNewAccountController {
         }else if(accountTypeCombo.getValue().equals("Gold Diamond Checking Account")){
             flexibleRate = flexibleRateCheck == null ? null : flexibleRateCheck.isSelected();
         }else if(accountTypeCombo.getValue().equals("That's My Bank Checking Account")){
-            
+
         }else if(accountTypeCombo.getValue().equals("CD Account")){
-            
+
         }else{
 
         }
-        if(customerID.isBlank() || accountNumber.isBlank() || compoundFrequency.isBlank()){
-                if(statusLabel != null){
-                    statusLabel.setText("customer ID, account number, interest rate, and compound frequency is required");
-                    return;
-                }
+        if(customerID == null || customerID.isBlank() || accountNumber.isBlank() || compoundFrequency.isBlank()){
+            if(statusLabel != null){
+                statusLabel.setText("customer ID, account number, interest rate, and compound frequency is required");
+                return;
+            }
         }
         File outputFile = new File("src/testAccounts.csv");
         try{
