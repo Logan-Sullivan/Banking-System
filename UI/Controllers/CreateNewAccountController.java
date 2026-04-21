@@ -4,7 +4,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-
+import Account_Classes.SavingsAccount;
+import Account_Classes.GDAccount;
+import Account_Classes.TMBAccount;
+import Account_Classes.CDAccount;
+import Utils.CsvManager;
 import User_Classes.Customer;
 import Utils.AppState;
 import javafx.event.ActionEvent;
@@ -34,8 +38,6 @@ public class CreateNewAccountController {
     private CheckBox flexibleRateCheck;
     @FXML
     private ComboBox<String> customerIdComboBox;
-    @FXML
-    private TextField accountNumberField;
     @FXML
     private Label statusLabel;
     @FXML
@@ -73,29 +75,29 @@ public class CreateNewAccountController {
     //This function is for the account type being chosen using the combo box.
     //This reveals the extra fields that each account type might need so the teller can input the information
     @FXML
-    private void onAccountTypeChosen(ActionEvent event){
-        if(accountTypeCombo.getValue().equals("Savings Account")){
+    private void onAccountTypeChosen(ActionEvent event) {
+        if (accountTypeCombo.getValue().equals("Savings Account")) {
             interestRateField.setVisible(true);
             interestRateLabel.setVisible(true);
             compoundFrequencyLabel.setVisible(true);
             compoundFrequencyField.setVisible(true);
             flexibleRateCheck.setVisible(false);
         }
-        if(accountTypeCombo.getValue().equals("Gold Diamond Checking Account")){
+        if (accountTypeCombo.getValue().equals("Gold Diamond Checking Account")) {
             interestRateField.setVisible(false);
             interestRateLabel.setVisible(false);
             compoundFrequencyLabel.setVisible(false);
             compoundFrequencyField.setVisible(false);
             flexibleRateCheck.setVisible(true);
         }
-        if(accountTypeCombo.getValue().equals("That's My Bank Checking Account")){
+        if (accountTypeCombo.getValue().equals("That's My Bank Checking Account")) {
             interestRateField.setVisible(false);
             interestRateLabel.setVisible(false);
             compoundFrequencyLabel.setVisible(false);
             compoundFrequencyField.setVisible(false);
             flexibleRateCheck.setVisible(false);
         }
-        if(accountTypeCombo.getValue().equals("CD Account")){
+        if (accountTypeCombo.getValue().equals("CD Account")) {
             interestRateField.setVisible(false);
             interestRateLabel.setVisible(false);
             compoundFrequencyLabel.setVisible(false);
@@ -103,66 +105,96 @@ public class CreateNewAccountController {
             flexibleRateCheck.setVisible(false);
         }
     }
-    /**
-     * This is currently in it's VERY early stages, and can only handle saving accounts.
-     * It also does not link the accoutns to the customers
-     * It writes the account information to a csv to be read.
-     * @param event the "create account" button being pressed
-     */
     @FXML
-    private void createAccountPressed(ActionEvent event){
-        String customerID = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
-        String accountNumber = accountNumberField == null ? "" : accountNumberField.getText();
-        double interestRate = 0.0;
-        String compoundFrequency = "";
-        Boolean flexibleRate;
-        double balance = 0.0;
-        try{
-            balance = initialDepositField == null ? 0.0 : Double.parseDouble(initialDepositField.getText());
-        }catch(Exception e){
-            if (statusLabel != null){
-                statusLabel.setText("Please enter a valid balance number");
-                statusLabel.setVisible(true);
+    private void createAccountPressed(ActionEvent event) {
+
+        // get selected customer ID
+        String customerID = customerIdComboBox.getValue();
+
+        if (customerID == null || customerID.isBlank()) {
+            statusLabel.setText("Please select a customer");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        // find customer in AppState
+        Customer selectedCustomer = null;
+        for (int i = 0; i < AppState.customers.getMcount(); i++) {
+            Customer c = AppState.customers.getValue(i);
+            if (c.customerId.equals(customerID)) {
+                selectedCustomer = c;
+                break;
             }
         }
-        if(accountTypeCombo.getValue().equals("Savings Account")){
-            try{
-                interestRate = interestRateField == null ? 0.0 : Double.parseDouble(interestRateField.getText());
-                compoundFrequency = compoundFrequencyField == null ? "" : compoundFrequencyField.getText();
-            }catch(Exception e){
-                statusLabel.setText("Please enter a valid interest rate");
-                statusLabel.setVisible(true);
-                return;
-            }
-            if(interestRate==0.0){
-                if(statusLabel != null){
-                    statusLabel.setText("interest rate is required");
+
+        if (selectedCustomer == null) {
+            statusLabel.setText("Customer not found");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        double balance;
+
+        try {
+            balance = Double.parseDouble(initialDepositField.getText());
+        } catch (Exception e) {
+            statusLabel.setText("Invalid deposit amount");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        String type = (String) accountTypeCombo.getValue();
+
+        if (type == null) {
+            statusLabel.setText("Please select account type");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        switch (type) {
+
+            case "Savings Account" -> {
+                double rate;
+                String freq;
+
+                try {
+                    rate = Double.parseDouble(interestRateField.getText());
+                    freq = compoundFrequencyField.getText();
+                } catch (Exception e) {
+                    statusLabel.setText("Invalid savings input");
+                    statusLabel.setVisible(true);
                     return;
                 }
+
+                // create savings account
+                SavingsAccount savings = new SavingsAccount(rate, freq, false, balance); // auto account number
+                selectedCustomer.accountList.add(savings); // attach to customer
             }
-        }else if(accountTypeCombo.getValue().equals("Gold Diamond Checking Account")){
-            flexibleRate = flexibleRateCheck == null ? null : flexibleRateCheck.isSelected();
-        }else if(accountTypeCombo.getValue().equals("That's My Bank Checking Account")){
 
-        }else if(accountTypeCombo.getValue().equals("CD Account")){
+            case "Gold Diamond Checking Account" -> {
+                boolean flexible = flexibleRateCheck.isSelected();
 
-        }else{
+                GDAccount gd = new GDAccount(null, balance, flexible); // no overdraft yet
+                selectedCustomer.accountList.add(gd);
+            }
 
-        }
-        if(customerID == null || customerID.isBlank() || accountNumber.isBlank() || compoundFrequency.isBlank()){
-            if(statusLabel != null){
-                statusLabel.setText("customer ID, account number, interest rate, and compound frequency is required");
-                return;
+            case "That's My Bank Checking Account" -> {
+                TMBAccount tmb = new TMBAccount(null, balance);
+                selectedCustomer.accountList.add(tmb);
+            }
+
+            case "CD Account" -> {
+                double rate = 0.05; // simple default for now
+
+                CDAccount cd = new CDAccount(balance, rate, null, 50.0); // placeholder values
+                selectedCustomer.accountList.add(cd);
             }
         }
-        File outputFile = new File("src/testAccounts.csv");
-        try{
-            PrintWriter writer = new PrintWriter(outputFile);
-            writer.write(String.format("%s, %s, %f, %s, %f", customerID, accountNumber, interestRate, compoundFrequency, balance));
-            writer.close();
-        }catch(FileNotFoundException e){
-            statusLabel.setText("Problem with writer");
-            statusLabel.setVisible(true);
-        }
+
+        // OPTIONAL: save back to CSV using your existing manager
+        Utils.CsvManager.writeCustomersToCsv(AppState.customers);
+
+        statusLabel.setText("Account created successfully!");
+        statusLabel.setVisible(true);
     }
 }
