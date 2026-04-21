@@ -45,4 +45,19 @@ public class SavingsAccount extends Account{
             System.out.println("Account set as non-backup");
         }
     }
+
+    // Ike: getter for interest rate (CSV writing)
+    public double getInterestRate(){
+        return intrestRate;
+    }
+
+    // Ike: getter for compound frequency (CSV writing)
+    public String getCompoundFreq(){
+        return compoundFreq;
+    }
+
+    // Ike: getter for overdraft flag (CSV writing)
+    public boolean isOverdraftBackup(){
+        return overdraftBackup;
+    }
 }
