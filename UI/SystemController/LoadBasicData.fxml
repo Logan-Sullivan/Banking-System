@@ -20,7 +20,7 @@
     <VBox spacing="10.0" maxWidth="360.0">
         <Label text="Data Source File" />
         <TextField fx:id="dataSourceField"
-                   text="src/User_Classes/customers.csv"
+                   text="src/data.csv"
                    promptText="Enter data file path"
                    prefWidth="300.0" />
     </VBox>
