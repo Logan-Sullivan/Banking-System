@@ -22,10 +22,6 @@
         <ComboBox fx:id="customerIdComboBox"
                   prefWidth="280.0"
                   promptText="Select customer ID" />
-
-        <Label text="Account Number" />
-        <TextField fx:id="accountNumberField" prefWidth="280.0" promptText="Enter account number" />
-
         <Label text="Account Type" />
         <ComboBox fx:id="accountTypeCombo" onAction="#onAccountTypeChosen" prefWidth="280.0">
             <items>

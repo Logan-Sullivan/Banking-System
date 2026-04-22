@@ -1,11 +1,70 @@
+import Utils.AppState;
+import Utils.ArrayListManager;
+import Utils.CheckpointManager;
+import Utils.CsvManager;
+import User_Classes.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class CheckPointController {
+
+    @FXML
+    private Label statusLabel;
+
+    @FXML
+    private void beginCheckPoint(ActionEvent event) {
+        try {
+            CheckpointManager checkpointManager = new CheckpointManager();
+            checkpointManager.EXEC_CHECKPOINT(AppState.customers);
+            if (statusLabel != null) {
+                statusLabel.setText("Checkpoint completed successfully.");
+            }
+        } catch (Exception e) {
+            if (statusLabel != null) {
+                statusLabel.setText("Checkpoint failed.");
+            }
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void restoreSavedState(ActionEvent event) {
+        try {
+            AppState.customers = new ArrayListManager<>();
+            CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers);
+            CsvManager.handleOverdrafts(AppState.customers);
+
+            if (statusLabel != null) {
+                statusLabel.setText("Saved state restored successfully.");
+            }
+        } catch (Exception e) {
+            if (statusLabel != null) {
+                statusLabel.setText("Restore failed.");
+            }
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void shutDownSystem(ActionEvent event) {
+        try {
+            CheckpointManager checkpointManager = new CheckpointManager();
+            checkpointManager.EXEC_CHECKPOINT(AppState.customers);
+            
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.close();
+        } catch (Exception e) {
+            if (statusLabel != null) {
+                statusLabel.setText("Shutdown failed.");
+            }
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     private void returnToSystemController(ActionEvent event) {
