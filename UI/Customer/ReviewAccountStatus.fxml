@@ -5,11 +5,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="CENTER"
       spacing="18.0"
-      xmlns="http://javafx.com/javafx/25"
+      xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ReviewAccountStatusController">
     <padding>
@@ -18,25 +19,38 @@
 
     <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Review Account Status" />
 
+    <VBox maxWidth="320.0" spacing="10.0">
+        <Label text="Customer ID" />
+        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="280.0" />
+
+        <Label text="First Name" />
+        <TextField fx:id="firstNameField" promptText="Enter first name" prefWidth="280.0" />
+
+        <Label text="Last Name" />
+        <TextField fx:id="lastNameField" promptText="Enter last name" prefWidth="280.0" />
+    </VBox>
+
     <VBox maxWidth="600.0" spacing="10.0">
         <Label text="Customer Account Overview" />
 
-        <TableView prefHeight="300.0" prefWidth="550.0">
+        <TableView fx:id="accountTableView" prefHeight="300.0" prefWidth="550.0">
             <columns>
-                <TableColumn prefWidth="150.0" text="Account Number" />
-                <TableColumn prefWidth="120.0" text="Type" />
-                <TableColumn prefWidth="120.0" text="Balance" />
-                <TableColumn prefWidth="120.0" text="Status" />
+                <TableColumn fx:id="accountNumberColumn" prefWidth="150.0" text="Account Number" />
+                <TableColumn fx:id="typeColumn" prefWidth="120.0" text="Type" />
+                <TableColumn fx:id="balanceColumn" prefWidth="120.0" text="Balance" />
+                <TableColumn fx:id="statusColumn" prefWidth="120.0" text="Status" />
             </columns>
         </TableView>
     </VBox>
 
     <VBox alignment="CENTER" spacing="12.0">
-        <Button prefWidth="180.0" text="Refresh Accounts" />
+        <Button prefWidth="180.0"
+                text="Refresh Accounts"
+                onAction="#refreshAccounts" />
         <Button prefWidth="180.0"
                 text="Return to Customer Screen"
                 onAction="#returnToCustomerScreen" />
     </VBox>
 
-    <Label style="-fx-font-size: 12px;" text="View all accounts" />
+    <Label fx:id="statusLabel" style="-fx-font-size: 12px;" text="Enter your information to view your accounts." />
 </VBox>
