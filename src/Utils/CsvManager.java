@@ -27,13 +27,18 @@ public class CsvManager {
 
     // CS: fetches the customer information then the account information from the CSV and loads it to create all accounts and customers.
     public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList) {
-        // CS: points to the file to instantiate the customers from.
-        File file = new File("src/data.csv"); // changed to use data.csv instead of customers.csv
+        fetchCustsAndAccountsFromCSV(CustomerList, "src/data.csv");
+    }
+
+    // Same as fetchCustsAndAccountsFromCSV(CustomerList) but allows the UI to choose a file.
+    public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList, String path) {
+        File file = new File(path);
 
         try (Scanner fileReader = new Scanner(file)) {
             while (fileReader.hasNextLine()) {
                 String text = fileReader.nextLine();
-                String[] formattedText = text.split(",");
+                String[] formattedText = text.split(",", -1);
+                if (formattedText.length < 7) continue;
 
                 Customer customer = (new Customer(formattedText[0], formattedText[1], formattedText[2], formattedText[3], formattedText[4], formattedText[5], formattedText[6]));
 

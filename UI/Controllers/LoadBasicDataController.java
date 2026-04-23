@@ -1,6 +1,7 @@
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.ArrayListManager;
+import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,7 +40,8 @@ public class LoadBasicDataController {
 
         // Reset in-memory state, then load from CSV.
         AppState.customers = new ArrayListManager<>();
-        Main.fetchCustsFromCSV(AppState.customers, path);
+        CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, path);
+        CsvManager.handleOverdrafts(AppState.customers);
 
         if (statusLabel != null) {
             statusLabel.setText("Loaded " + AppState.customers.getMcount() + " customers from " + path);
@@ -67,7 +69,7 @@ public class LoadBasicDataController {
                 lines++;
                 // Expected: customerId,address,city,state,zipcode,firstName,lastName
                 String[] parts = line.split(",", -1);
-                if (parts.length != 7) {
+                if (parts.length < 7) {
                     invalid++;
                     continue;
                 }

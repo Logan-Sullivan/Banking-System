@@ -22,7 +22,7 @@
 
     <VBox spacing="10.0" maxWidth="320.0">
         <Label text="Customer ID" />
-        <TextField promptText="Enter customer ID" prefWidth="280.0" />
+        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="280.0" />
 
         <Label text="Account Number" />
         <TextField promptText="Enter account number" prefWidth="280.0" />
@@ -38,15 +38,15 @@
         </ComboBox>
 
         <Label text="Withdrawal Amount" />
-        <TextField promptText="Enter withdrawal amount" prefWidth="280.0" />
+        <TextField fx:id="withdrawAmountField" promptText="Enter withdrawal amount" prefWidth="280.0" />
     </VBox>
 
     <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Withdraw" prefWidth="180.0" />
+        <Button text="Withdraw" prefWidth="180.0" onAction="#withdrawPressed" />
         <Button text="Return to Teller Screen"
                 prefWidth="180.0"
                 onAction="#returnToTellerScreen" />
     </VBox>
 
-    <Label text="After withdrawal, return to the Teller Screen." style="-fx-font-size: 12px;" />
+    <Label fx:id="statusLabel" text="Ready." style="-fx-font-size: 12px;" />
 </VBox>

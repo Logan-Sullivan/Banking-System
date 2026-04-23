@@ -1,7 +1,4 @@
-import Account_Classes.CDAccount;
-import Account_Classes.GDAccount;
-import Account_Classes.SavingsAccount;
-import Account_Classes.TMBAccount;
+import Account_Classes.*;
 import User_Classes.Customer;
 import Utils.AppState;
 import javafx.beans.property.SimpleStringProperty;
