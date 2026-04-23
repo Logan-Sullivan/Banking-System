@@ -40,6 +40,11 @@ public class TellerScreenController {
     }
 
     @FXML
+    private void goToDepositToAccount(ActionEvent event) {
+        switchScreen(event, "/Teller/DepositToAccount.fxml", "Deposit to Account");
+    }
+
+    @FXML
     private void goToStopPayment(ActionEvent event) {
         switchScreen(event, "/Teller/StopPayment.fxml", "Stop Payment");
     }

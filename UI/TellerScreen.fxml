@@ -26,6 +26,9 @@
         <Button text="Link Accounts"
                 prefWidth="280.0"
                 onAction="#goToLinkAccounts" />
+        <Button text="Deposit to Account"
+                prefWidth="280.0"
+                onAction="#goToDepositToAccount" />
         <Button text="Withdraw from Account"
                 prefWidth="280.0"
                 onAction="#goToWithdrawFromAccount" />
