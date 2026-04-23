@@ -165,4 +165,39 @@ public class CsvManager {
             e.printStackTrace();
         }//end of try-catch
     }//end of writeCustomersToCsv
+
+    public static void fetchChecksFromCSV(ArrayListManager<Check> Checklist, String fileName){
+        String ID,senderID,receiverID,amount,status;
+
+        File file = new File(fileName);
+        try (Scanner fileReader = new Scanner(file)){
+            while (fileReader.hasNextLine()){
+                String text = fileReader.nextLine();
+                String[] formattedText = text.split(",");
+                ID = formattedText[0];
+                senderID = formattedText[1];
+                receiverID = formattedText[2];
+                amount = formattedText[3];
+                status = formattedText[4];
+                Checklist.addInOrder(new Check(Integer.parseInt(ID),senderID,receiverID,Double.parseDouble(amount),status));
+
+            }
+        } catch (FileNotFoundException e){
+            System.out.println("File not found");
+        }
+    }
+
+    public static void writeChecksToCSV(ArrayListManager<Check> Checklist,String fileName){
+        try{
+            FileWriter Writer = new FileWriter(fileName);
+            for (int i = 0; i < Checklist.getMcount(); i++) {
+                Writer.write(Checklist.getValue(i).CheckCSVString());
+            }
+                Writer.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
 }

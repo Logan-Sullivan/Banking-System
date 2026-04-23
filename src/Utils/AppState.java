@@ -8,7 +8,7 @@ import User_Classes.Customer;
  */
 public final class AppState {
     public static ArrayListManager<Customer> customers = new ArrayListManager<>();
-
+    public static ArrayListManager<Check> checks = new ArrayListManager<>();
     private AppState() {
     }
 }
