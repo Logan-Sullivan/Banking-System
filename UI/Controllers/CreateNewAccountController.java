@@ -4,6 +4,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import Account_Classes.SavingsAccount;
 import Account_Classes.GDAccount;
 import Account_Classes.TMBAccount;
@@ -43,17 +45,25 @@ public class CreateNewAccountController {
     @FXML
     private TextField initialDepositField;
 
+    private final Map<String, Customer> customerMap = new HashMap<>();
+
     @FXML
     public void initialize() {
         if (customerIdComboBox == null) return;
 
         customerIdComboBox.getItems().clear();
+        customerMap.clear();
 
         if (AppState.customers != null) {
             for (int i = 0; i < AppState.customers.getMcount(); i++) {
                 Customer c = AppState.customers.getValue(i);
-                if (c != null && c.customerId != null && !c.customerId.isBlank()) {
-                    customerIdComboBox.getItems().add(c.customerId);
+
+                // display first and last name instead of ID
+                if (c != null && c.firstName != null && c.lastName != null) {
+                    String displayName = c.firstName + " " + c.lastName;
+
+                    customerIdComboBox.getItems().add(displayName);
+                    customerMap.put(displayName, c);
                 }
             }
         }
@@ -72,8 +82,6 @@ public class CreateNewAccountController {
         }
     }
 
-    //This function is for the account type being chosen using the combo box.
-    //This reveals the extra fields that each account type might need so the teller can input the information
     @FXML
     private void onAccountTypeChosen(ActionEvent event) {
         if (accountTypeCombo.getValue().equals("Savings Account")) {
@@ -105,27 +113,21 @@ public class CreateNewAccountController {
             flexibleRateCheck.setVisible(false);
         }
     }
+
     @FXML
     private void createAccountPressed(ActionEvent event) {
 
-        // get selected customer ID
-        String customerID = customerIdComboBox.getValue();
+        // now getting selected name instead of ID
+        String selectedCustomerName = customerIdComboBox.getValue();
 
-        if (customerID == null || customerID.isBlank()) {
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             statusLabel.setText("Please select a customer");
             statusLabel.setVisible(true);
             return;
         }
 
-        // find customer in AppState
-        Customer selectedCustomer = null;
-        for (int i = 0; i < AppState.customers.getMcount(); i++) {
-            Customer c = AppState.customers.getValue(i);
-            if (c.customerId.equals(customerID)) {
-                selectedCustomer = c;
-                break;
-            }
-        }
+        // get actual customer from map
+        Customer selectedCustomer = customerMap.get(selectedCustomerName);
 
         if (selectedCustomer == null) {
             statusLabel.setText("Customer not found");
@@ -166,15 +168,14 @@ public class CreateNewAccountController {
                     return;
                 }
 
-                // create savings account
-                SavingsAccount savings = new SavingsAccount(rate, freq, false, balance); // auto account number
-                selectedCustomer.accountList.add(savings); // attach to customer
+                SavingsAccount savings = new SavingsAccount(rate, freq, false, balance);
+                selectedCustomer.accountList.add(savings);
             }
 
             case "Gold Diamond Checking Account" -> {
                 boolean flexible = flexibleRateCheck.isSelected();
 
-                GDAccount gd = new GDAccount(null, balance, flexible); // no overdraft yet
+                GDAccount gd = new GDAccount(null, balance, flexible);
                 selectedCustomer.accountList.add(gd);
             }
 
@@ -184,14 +185,13 @@ public class CreateNewAccountController {
             }
 
             case "CD Account" -> {
-                double rate = 0.05; // simple default for now
+                double rate = 0.05;
 
-                CDAccount cd = new CDAccount(balance, rate, null, 50.0); // placeholder values
+                CDAccount cd = new CDAccount(balance, rate, null, 50.0);
                 selectedCustomer.accountList.add(cd);
             }
         }
 
-        // OPTIONAL: save back to CSV using your existing manager
         Utils.CsvManager.writeCustomersToCsv(AppState.customers);
 
         statusLabel.setText("Account created successfully!");
