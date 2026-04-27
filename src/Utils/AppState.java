@@ -1,6 +1,7 @@
 package Utils;
 
 import User_Classes.Customer;
+import java.util.HashMap;
 
 /**
  * Minimal shared in-memory state for the JavaFX UI.
@@ -8,8 +9,11 @@ import User_Classes.Customer;
  */
 public final class AppState {
     public static ArrayListManager<Customer> customers = new ArrayListManager<>();
+    public static HashMap<String, Double> loanRates = new HashMap<>();
+    public static HashMap<String, String> loanEffectiveDates = new HashMap<>();
+    public static HashMap<String, Double> accountRates = new HashMap<>();
+    public static HashMap<String, String> accountEffectiveDates = new HashMap<>();
 
     private AppState() {
     }
 }
-
