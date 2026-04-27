@@ -32,6 +32,14 @@ public class WithdrawFromAccountController {
 
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label previousBalanceLabel;
+
+    @FXML
+    private Label withdrawalAmountLabel;
+
+    @FXML
+    private Label newBalanceLabel;
 
     // maps dropdown text back to real account object
     private final Map<String, Account> accountMap = new HashMap<>();
@@ -151,11 +159,28 @@ public class WithdrawFromAccountController {
             return;
         }
 
+        double previousBalance = account.getBalance();
+
         account.withdraw(amount);
+
+        double newBalance = account.getBalance();
+
         CsvManager.writeCustomersToCsv(AppState.customers);
 
+        if (previousBalanceLabel != null) {
+            previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));
+        }
+
+        if (withdrawalAmountLabel != null) {
+            withdrawalAmountLabel.setText("Withdrawal Amount: $" + String.format("%.2f", amount));
+        }
+
+        if (newBalanceLabel != null) {
+            newBalanceLabel.setText("New Balance: $" + String.format("%.2f", newBalance));
+        }
+
         if (statusLabel != null) {
-            statusLabel.setText("Withdrew $" + String.format("%.2f", amount) + ". New balance: $" + String.format("%.2f", account.getBalance()));
+            statusLabel.setText("Withdrawal completed successfully.");
         }
 
         // refresh dropdown text so new balance shows
