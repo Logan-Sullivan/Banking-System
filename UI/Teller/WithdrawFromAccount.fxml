@@ -35,6 +35,11 @@
                    promptText="Enter withdrawal amount"
                    prefWidth="280.0" />
     </VBox>
+    <Label text="Withdrawal Output" style="-fx-font-weight: bold;" />
+
+    <Label fx:id="previousBalanceLabel" text="Previous Balance: $" style="-fx-font-size: 12px;" />
+    <Label fx:id="withdrawalAmountLabel" text="Withdrawal Amount: $" style="-fx-font-size: 12px;" />
+    <Label fx:id="newBalanceLabel" text="New Balance: $" style="-fx-font-size: 12px;" />
 
     <VBox spacing="12.0" alignment="CENTER">
         <Button text="Withdraw"
@@ -47,4 +52,3 @@
 
     <Label fx:id="statusLabel" text="Ready." style="-fx-font-size: 12px;" />
 </VBox>
-
