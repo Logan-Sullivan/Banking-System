@@ -32,6 +32,14 @@ public class DepositToAccountController {
 
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label previousBalanceLabel;
+
+    @FXML
+    private Label depositAmountLabel;
+
+    @FXML
+    private Label newBalanceLabel;
 
     // maps dropdown text back to real account object
     private final Map<String, Account> accountMap = new HashMap<>();
@@ -137,10 +145,26 @@ public class DepositToAccountController {
             return;
         }
 
+        double previousBalance = account.getBalance();
+
         account.deposit(amount);
+
+        double newBalance = account.getBalance();
 
         // save updated balances back to CSV
         CsvManager.writeCustomersToCsv(AppState.customers);
+
+        if (previousBalanceLabel != null) {
+            previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));
+        }
+
+        if (depositAmountLabel != null) {
+            depositAmountLabel.setText("Deposit Amount: $" + String.format("%.2f", amount));
+        }
+
+        if (newBalanceLabel != null) {
+            newBalanceLabel.setText("New Balance: $" + String.format("%.2f", newBalance));
+        }
 
         if (statusLabel != null) {
             statusLabel.setText("Deposit completed successfully.");
