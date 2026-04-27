@@ -48,7 +48,7 @@
                    promptText="Enter interest rate"
                    prefWidth="280.0" />
 
-        <Label fx:id="termLabel" text="Mortgage Term" visible="false" />
+        <Label fx:id="termLabel" text="Loan Term" visible="false" />
         <ComboBox fx:id="termComboBox"
                   visible="false"
                   prefWidth="280.0">
