@@ -9,6 +9,10 @@ public class TMBAccount extends CheckingsAccount {
         super(overdraftAccount, balance);
     }
 
+    public TMBAccount(String id, SavingsAccount overdraftAccount, double balance) {
+        super(id, overdraftAccount, balance);
+    }
+
     @Override
     public void transfer(Account account, double amount){
         this.withdraw(tsFee);
