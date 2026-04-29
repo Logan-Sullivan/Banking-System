@@ -30,6 +30,7 @@ public class SetCDAndCheckingRatesController {
             statusLabel.setText("Select an account type.");
             return;
         }
+
         if (effectiveDate.isBlank()) {
             statusLabel.setText("Enter an effective date.");
             return;
@@ -48,9 +49,22 @@ public class SetCDAndCheckingRatesController {
             return;
         }
 
+        // stores the global manager-set rate
         AppState.accountRates.put(accountType, rate);
+
+        // stores the effective date for the global rate
         AppState.accountEffectiveDates.put(accountType, effectiveDate);
-        statusLabel.setText("Account rate updated.");
+
+        // status message for global rate behavior
+        if (accountType.equals("CD Account")) {
+            statusLabel.setText("CD rate updated for newly established CDs.");
+        } else if (accountType.equals("Savings Account")) {
+            statusLabel.setText("Savings rate updated for new savings accounts.");
+        } else if (accountType.equals("Gold Diamond Checking Account")) {
+            statusLabel.setText("Gold/Diamond checking rate stored for future calculations.");
+        } else {
+            statusLabel.setText("Account rate updated.");
+        }
     }
 
     @FXML
