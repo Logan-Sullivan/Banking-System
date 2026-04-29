@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +87,14 @@ public class EstablishCDsController {
 
         try {
             initialDeposit = Double.parseDouble(initialDepositField.getText());
-            interestRate = Double.parseDouble(interestRateField.getText());
+            // use manager-set CD rate if field is blank
+            String rateText = interestRateField.getText();
+
+            if (rateText == null || rateText.isBlank()) {
+                interestRate = AppState.accountRates.getOrDefault("CD Account", 0.05);
+            } else {
+                interestRate = Double.parseDouble(rateText);
+            }
             earlyPenalty = Double.parseDouble(earlyPenaltyField.getText());
         } catch (Exception e) {
             statusLabel.setText("Please enter valid numeric CD data.");
@@ -102,8 +111,19 @@ public class EstablishCDsController {
             return;
         }
 
-        // create CD account using current CD constructor
-        CDAccount cd = new CDAccount(initialDeposit, interestRate, null, earlyPenalty);
+        // turn selected CD term into number of months
+        int months = getMonthsFromTerm(cdTerm);
+
+        if (months == 0) {
+            statusLabel.setText("Invalid CD term selected.");
+            return;
+        }
+
+        // calculate maturity date from selected term
+        Date maturityDate = calculateMaturityDate(months);
+
+        // create CD with calculated maturity date
+        CDAccount cd = new CDAccount(initialDeposit, interestRate, maturityDate, earlyPenalty);
 
         // attach CD to selected customer
         selectedCustomer.accountList.add(cd);
@@ -111,7 +131,26 @@ public class EstablishCDsController {
         // save CD to CSV
         CsvManager.writeCustomersToCsv(AppState.customers);
 
-        statusLabel.setText("CD established for " + selectedCustomer.firstName + " " + selectedCustomer.lastName + ".");
+        statusLabel.setText("CD established for " + selectedCustomer.firstName + " " + selectedCustomer.lastName
+                + ". Term: " + cdTerm + ".");
+    }
+
+    // converts combo box term text into months
+    private int getMonthsFromTerm(String cdTerm) {
+        return switch (cdTerm) {
+            case "6 Months" -> 6;
+            case "12 Months" -> 12;
+            case "24 Months" -> 24;
+            case "36 Months" -> 36;
+            default -> 0;
+        };
+    }
+
+    // calculates future maturity date
+    private Date calculateMaturityDate(int months) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, months);
+        return calendar.getTime();
     }
 
     @FXML
