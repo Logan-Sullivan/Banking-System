@@ -160,7 +160,15 @@ public class CreateNewAccountController {
                 String freq;
 
                 try {
-                    rate = Double.parseDouble(interestRateField.getText());
+                    // use manager-set savings rate if field is blank
+                    String rateText = interestRateField.getText();
+
+                    if (rateText == null || rateText.isBlank()) {
+                        rate = AppState.accountRates.getOrDefault("Savings Account", 0.01);
+                    } else {
+                        rate = Double.parseDouble(rateText);
+                    }
+
                     freq = compoundFrequencyField.getText();
                 } catch (Exception e) {
                     statusLabel.setText("Invalid savings input");
@@ -198,3 +206,4 @@ public class CreateNewAccountController {
         statusLabel.setVisible(true);
     }
 }
+
