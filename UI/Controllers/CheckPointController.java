@@ -2,7 +2,6 @@ import Utils.AppState;
 import Utils.ArrayListManager;
 import Utils.CheckpointManager;
 import Utils.CsvManager;
-import User_Classes.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,7 +36,6 @@ public class CheckPointController {
         try {
             AppState.customers = new ArrayListManager<>();
             CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers);
-            CsvManager.handleOverdrafts(AppState.customers);
 
             if (statusLabel != null) {
                 statusLabel.setText("Saved state restored successfully.");
@@ -55,7 +53,7 @@ public class CheckPointController {
         try {
             CheckpointManager checkpointManager = new CheckpointManager();
             checkpointManager.EXEC_CHECKPOINT(AppState.customers);
-            
+
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();
         } catch (Exception e) {
