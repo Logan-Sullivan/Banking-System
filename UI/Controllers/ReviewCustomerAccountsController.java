@@ -16,6 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ReviewCustomerAccountsController {
 
     @FXML
@@ -45,22 +48,30 @@ public class ReviewCustomerAccountsController {
     @FXML
     private TableColumn<AccountRow, String> notesColumn;
 
+    // map display name to actual customer
+    private final Map<String, Customer> customerMap = new HashMap<>();
+
     @FXML
     public void initialize() {
         if (customerIdComboBox != null) {
             customerIdComboBox.getItems().clear();
+            customerMap.clear();
 
             if (AppState.customers != null) {
                 for (int i = 0; i < AppState.customers.getMcount(); i++) {
                     Customer c = AppState.customers.getValue(i);
-                    if (c != null && c.customerId != null && !c.customerId.isBlank()) {
-                        customerIdComboBox.getItems().add(c.customerId);
+
+                    // show first and last name instead of customer ID
+                    if (c != null && c.firstName != null && c.lastName != null) {
+                        String displayName = c.firstName + " " + c.lastName;
+                        customerIdComboBox.getItems().add(displayName);
+                        customerMap.put(displayName, c);
                     }
                 }
             }
         }
 
-        // connect table columns to row fields
+        // connects table columns to row fields
         if (accountNumberColumn != null) {
             accountNumberColumn.setCellValueFactory(new PropertyValueFactory<>("accountNumber"));
         }
@@ -83,10 +94,11 @@ public class ReviewCustomerAccountsController {
 
     @FXML
     private void searchAccounts(ActionEvent event) {
-        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+        // selected value is now customer name
+        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
 
-        if (customerId == null || customerId.isBlank()) {
-            if (statusLabel != null) statusLabel.setText("Select a Customer ID.");
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
+            if (statusLabel != null) statusLabel.setText("Select a Customer Name.");
             return;
         }
 
@@ -95,50 +107,50 @@ public class ReviewCustomerAccountsController {
             return;
         }
 
-        for (int i = 0; i < AppState.customers.getMcount(); i++) {
-            Customer c = AppState.customers.getValue(i);
-            if (c != null && customerId.equals(c.customerId)) {
-                ObservableList<AccountRow> rows = FXCollections.observableArrayList();
+        // finds customer from map instead of searching by ID
+        Customer c = customerMap.get(selectedCustomerName);
 
-                int accounts = c.accountList == null ? 0 : c.accountList.size();
+        if (c != null) {
+            ObservableList<AccountRow> rows = FXCollections.observableArrayList();
 
-                if (c.accountList != null) {
-                    for (Account account : c.accountList) {
-                        String type = getAccountType(account);
-                        String balance = String.format("$%.2f", account.getBalance());
-                        String recentDebit = "N/A";
-                        String status = "Current";
-                        String notes = getNotes(account);
+            int accounts = c.accountList == null ? 0 : c.accountList.size();
 
-                        rows.add(new AccountRow(
-                                account.accountNumber,
-                                type,
-                                balance,
-                                recentDebit,
-                                status,
-                                notes
-                        ));
-                    }
+            if (c.accountList != null) {
+                for (Account account : c.accountList) {
+                    String type = getAccountType(account);
+                    String balance = String.format("$%.2f", account.getBalance());
+                    String recentDebit = "N/A";
+                    String status = "Current";
+                    String notes = getNotes(account);
+
+                    rows.add(new AccountRow(
+                            account.accountNumber,
+                            type,
+                            balance,
+                            recentDebit,
+                            status,
+                            notes
+                    ));
                 }
-
-                if (accountTableView != null) {
-                    accountTableView.setItems(rows);
-                }
-
-                if (statusLabel != null) {
-                    statusLabel.setText("Found: " + c.firstName + " " + c.lastName + " | Accounts: " + accounts);
-                }
-                return;
             }
+
+            if (accountTableView != null) {
+                accountTableView.setItems(rows);
+            }
+
+            if (statusLabel != null) {
+                statusLabel.setText("Found: " + c.firstName + " " + c.lastName + " | Accounts: " + accounts);
+            }
+            return;
         }
 
         if (accountTableView != null) {
             accountTableView.getItems().clear();
         }
 
-        if (statusLabel != null) statusLabel.setText("Customer not found: " + customerId);
+        if (statusLabel != null) statusLabel.setText("Customer not found: " + selectedCustomerName);
     }
-    
+
     private String getAccountType(Account account) {
         if (account instanceof SavingsAccount) {
             return "Savings";
@@ -222,3 +234,4 @@ public class ReviewCustomerAccountsController {
         }
     }
 }
+

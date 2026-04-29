@@ -1,5 +1,6 @@
 import User_Classes.Customer;
 import Utils.AppState;
+import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,12 +69,12 @@ public class CreateNewCustomerController {
             return;
         }
 
-        // If nothing has been loaded yet, pull from the default CSV so we don't overwrite it with only 1 row.
+        //  load existing CSV data with CsvManager if memory is empty
         if (AppState.customers == null || AppState.customers.getMcount() == 0) {
             File f = new File("src/data.csv");
             if (f.exists() && f.isFile()) {
                 AppState.customers = new Utils.ArrayListManager<>();
-                Main.fetchCustsFromCSV(AppState.customers, "src/data.csv");
+                CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, "src/data.csv");
             }
         }
 
@@ -87,7 +88,9 @@ public class CreateNewCustomerController {
 
         Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName);
         AppState.customers.addInOrder(customer);
-        Main.writeToArrayToCsv(AppState.customers, "src/data.csv");
+
+        //  save customers/accounts/loans with CsvManager
+        CsvManager.writeCustomersToCsv(AppState.customers);
 
         if (statusLabel != null) statusLabel.setText("Created customer " + firstName + " " + lastName + " (" + customerId + ")");
     }
