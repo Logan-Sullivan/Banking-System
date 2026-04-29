@@ -3,7 +3,10 @@ package Loan_Classes;
 import java.time.LocalDate;
 
 public abstract class Loan {
-    double principal,interest_rate,currentPaymentDue;
+    public String id;
+    public double principal;
+    public double interest_rate;
+    double currentPaymentDue;
     boolean isProblemAccount = false;
     String LoanStatus;
     LocalDate loanRepaymentDate;
