@@ -2,6 +2,7 @@ import Loan_Classes.MortgageLoan;
 import Loan_Classes.ShortTermLoan;
 import User_Classes.Customer;
 import Utils.AppState;
+import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
 import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +42,7 @@ public class CreateNewLoanController {
 
     @FXML
     private Label statusLabel;
-    
+
     private final Map<String, Customer> customerMap = new HashMap<>();
 
     @FXML
@@ -103,7 +105,16 @@ public class CreateNewLoanController {
 
         try {
             principal = Double.parseDouble(principalField.getText());
-            interestRate = Double.parseDouble(interestRateField.getText());
+
+            //use manager-set loan rate if interest field is blank
+            String rateText = interestRateField.getText();
+
+            if (rateText == null || rateText.isBlank()) {
+                interestRate = AppState.loanRates.getOrDefault(loanType, 0.05);
+            } else {
+                interestRate = Double.parseDouble(rateText);
+            }
+
             graceDays = Integer.parseInt(dueDateIntervalField.getText());
         } catch (Exception e) {
             statusLabel.setText("Please enter valid numeric loan data.");
@@ -125,18 +136,30 @@ public class CreateNewLoanController {
 
             int term = Integer.parseInt(termText);
 
-            // creates loan object 
+            // creates mortgage loan object
             MortgageLoan loan = new MortgageLoan(term, interestRate, principal, Period.ofDays(graceDays));
 
-            statusLabel.setText("Mortgage loan object created. Currently not wired yet.");
+            // attach loan to selected customer
+            selectedCustomer.payoffList.add(loan);
+
+            // save loan data to CSV
+            CsvManager.writeCustomersToCsv(AppState.customers);
+
+            statusLabel.setText("Mortgage loan created and saved.");
             return;
         }
 
         if ("Short Term Loan".equals(loanType)) {
-            // creates loan object
+            // creates short term loan object
             ShortTermLoan loan = new ShortTermLoan(interestRate, principal, Period.ofDays(graceDays));
 
-            statusLabel.setText("Short term loan object created. Currently not wired yet.");
+            //attach loan to selected customer
+            selectedCustomer.payoffList.add(loan);
+
+            // save loan data to CSV
+            CsvManager.writeCustomersToCsv(AppState.customers);
+
+            statusLabel.setText("Short term loan created and saved.");
             return;
         }
 
