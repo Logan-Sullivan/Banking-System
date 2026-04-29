@@ -3,6 +3,7 @@ import Account_Classes.CDAccount;
 import Account_Classes.GDAccount;
 import Account_Classes.SavingsAccount;
 import Account_Classes.TMBAccount;
+import Account_Classes.CheckingsAccount;
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.CsvManager;
@@ -162,6 +163,9 @@ public class WithdrawFromAccountController {
         double previousBalance = account.getBalance();
 
         account.withdraw(amount);
+        if (account instanceof CheckingsAccount checking) {
+            checking.handleOverdraft();
+        }
 
         double newBalance = account.getBalance();
 
