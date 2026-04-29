@@ -32,20 +32,36 @@ public class DepositToAccountController {
 
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label previousBalanceLabel;
+
+    @FXML
+    private Label depositAmountLabel;
+
+    @FXML
+    private Label newBalanceLabel;
 
     // maps dropdown text back to real account object
     private final Map<String, Account> accountMap = new HashMap<>();
+
+    // maps customer name back to real customer object
+    private final Map<String, Customer> customerMap = new HashMap<>();
 
     @FXML
     public void initialize() {
         if (customerIdComboBox != null) {
             customerIdComboBox.getItems().clear();
+            customerMap.clear();
 
             if (AppState.customers != null) {
                 for (int i = 0; i < AppState.customers.getMcount(); i++) {
                     Customer c = AppState.customers.getValue(i);
-                    if (c != null && c.customerId != null && !c.customerId.isBlank()) {
-                        customerIdComboBox.getItems().add(c.customerId);
+
+                    // show first and last name instead of customer ID
+                    if (c != null && c.firstName != null && c.lastName != null) {
+                        String displayName = c.firstName + " " + c.lastName;
+                        customerIdComboBox.getItems().add(displayName);
+                        customerMap.put(displayName, c);
                     }
                 }
             }
@@ -54,7 +70,7 @@ public class DepositToAccountController {
 
     @FXML
     private void onCustomerChosen(ActionEvent event) {
-        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
 
         accountMap.clear();
 
@@ -62,14 +78,15 @@ public class DepositToAccountController {
             accountComboBox.getItems().clear();
         }
 
-        if (customerId == null || customerId.isBlank()) {
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) {
                 statusLabel.setText("Please select a customer.");
             }
             return;
         }
 
-        Customer customer = findCustomerById(customerId);
+        // find customer from name map
+        Customer customer = customerMap.get(selectedCustomerName);
         if (customer == null) {
             if (statusLabel != null) {
                 statusLabel.setText("Customer not found.");
@@ -95,11 +112,11 @@ public class DepositToAccountController {
 
     @FXML
     private void depositToAccount(ActionEvent event) {
-        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
         String accountSelection = accountComboBox == null ? "" : accountComboBox.getValue();
         String amountText = depositAmountField == null ? "" : depositAmountField.getText();
 
-        if (customerId == null || customerId.isBlank()) {
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) statusLabel.setText("Please select a customer.");
             return;
         }
@@ -128,10 +145,26 @@ public class DepositToAccountController {
             return;
         }
 
+        double previousBalance = account.getBalance();
+
         account.deposit(amount);
+
+        double newBalance = account.getBalance();
 
         // save updated balances back to CSV
         CsvManager.writeCustomersToCsv(AppState.customers);
+
+        if (previousBalanceLabel != null) {
+            previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));
+        }
+
+        if (depositAmountLabel != null) {
+            depositAmountLabel.setText("Deposit Amount: $" + String.format("%.2f", amount));
+        }
+
+        if (newBalanceLabel != null) {
+            newBalanceLabel.setText("New Balance: $" + String.format("%.2f", newBalance));
+        }
 
         if (statusLabel != null) {
             statusLabel.setText("Deposit completed successfully.");
@@ -139,21 +172,6 @@ public class DepositToAccountController {
 
         // refresh account display so balance updates in dropdown
         onCustomerChosen(null);
-    }
-
-    // find selected customer
-    private Customer findCustomerById(String customerId) {
-        if (AppState.customers == null) {
-            return null;
-        }
-
-        for (int i = 0; i < AppState.customers.getMcount(); i++) {
-            Customer c = AppState.customers.getValue(i);
-            if (c != null && customerId.equals(c.customerId)) {
-                return c;
-            }
-        }
-        return null;
     }
 
     // account text for dropdown display

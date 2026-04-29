@@ -114,9 +114,10 @@ public class CsvManager {
                     }
                     case "ShortTermLoan" -> {
                         String id = vars[1];
-                        int term = Integer.parseInt(vars[2]);
-                        double rate = Double.parseDouble(vars[3]);
-                        ShortTermLoan stl = new ShortTermLoan(id, term, rate, java.time.Period.ofMonths(1), LocalDate.now());
+                        double rate = Double.parseDouble(vars[2]);
+                        double principle = Double.parseDouble(vars[3]);
+
+                        ShortTermLoan stl = new ShortTermLoan(id, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
                         customer.payoffList.add(stl);
                     }
                     case "CreditCard" -> {
@@ -143,7 +144,6 @@ public class CsvManager {
                     }
                 } // End of account switch
             } // end of forloop
-            CustomerList.addInOrder(customer);
         }//end of while loop
         catch (FileNotFoundException e) {
             System.out.println("File not found");

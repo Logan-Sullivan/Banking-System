@@ -3,6 +3,7 @@ import Account_Classes.CDAccount;
 import Account_Classes.GDAccount;
 import Account_Classes.SavingsAccount;
 import Account_Classes.TMBAccount;
+import Account_Classes.CheckingsAccount;
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.CsvManager;
@@ -32,20 +33,36 @@ public class WithdrawFromAccountController {
 
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label previousBalanceLabel;
+
+    @FXML
+    private Label withdrawalAmountLabel;
+
+    @FXML
+    private Label newBalanceLabel;
 
     // maps dropdown text back to real account object
     private final Map<String, Account> accountMap = new HashMap<>();
+
+    // maps customer name back to real customer object
+    private final Map<String, Customer> customerMap = new HashMap<>();
 
     @FXML
     public void initialize() {
         if (customerIdComboBox != null) {
             customerIdComboBox.getItems().clear();
+            customerMap.clear();
 
             if (AppState.customers != null) {
                 for (int i = 0; i < AppState.customers.getMcount(); i++) {
                     Customer c = AppState.customers.getValue(i);
-                    if (c != null && c.customerId != null && !c.customerId.isBlank()) {
-                        customerIdComboBox.getItems().add(c.customerId);
+
+                    //  show first and last name instead of customer ID
+                    if (c != null && c.firstName != null && c.lastName != null) {
+                        String displayName = c.firstName + " " + c.lastName;
+                        customerIdComboBox.getItems().add(displayName);
+                        customerMap.put(displayName, c);
                     }
                 }
             }
@@ -54,7 +71,7 @@ public class WithdrawFromAccountController {
 
     @FXML
     private void onCustomerChosen(ActionEvent event) {
-        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
 
         accountMap.clear();
 
@@ -62,14 +79,15 @@ public class WithdrawFromAccountController {
             accountComboBox.getItems().clear();
         }
 
-        if (customerId == null || customerId.isBlank()) {
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) {
                 statusLabel.setText("Please select a customer.");
             }
             return;
         }
 
-        Customer customer = findCustomerById(customerId);
+        // find customer from name map
+        Customer customer = customerMap.get(selectedCustomerName);
         if (customer == null) {
             if (statusLabel != null) {
                 statusLabel.setText("Customer not found.");
@@ -95,11 +113,11 @@ public class WithdrawFromAccountController {
 
     @FXML
     private void withdrawPressed(ActionEvent event) {
-        String customerId = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
+        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
         String accountSelection = accountComboBox == null ? "" : accountComboBox.getValue();
         String amountText = withdrawAmountField == null ? "" : withdrawAmountField.getText();
 
-        if (customerId == null || customerId.isBlank()) {
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) statusLabel.setText("Please select a customer.");
             return;
         }
@@ -142,25 +160,35 @@ public class WithdrawFromAccountController {
             return;
         }
 
+        double previousBalance = account.getBalance();
+
         account.withdraw(amount);
+        if (account instanceof CheckingsAccount checking) {
+            checking.handleOverdraft();
+        }
+
+        double newBalance = account.getBalance();
+
         CsvManager.writeCustomersToCsv(AppState.customers);
 
+        if (previousBalanceLabel != null) {
+            previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));
+        }
+
+        if (withdrawalAmountLabel != null) {
+            withdrawalAmountLabel.setText("Withdrawal Amount: $" + String.format("%.2f", amount));
+        }
+
+        if (newBalanceLabel != null) {
+            newBalanceLabel.setText("New Balance: $" + String.format("%.2f", newBalance));
+        }
+
         if (statusLabel != null) {
-            statusLabel.setText("Withdrew $" + String.format("%.2f", amount) + ". New balance: $" + String.format("%.2f", account.getBalance()));
+            statusLabel.setText("Withdrawal completed successfully.");
         }
 
         // refresh dropdown text so new balance shows
         onCustomerChosen(null);
-    }
-
-    // helper to find customer by ID
-    private Customer findCustomerById(String customerId) {
-        if (AppState.customers == null) return null;
-        for (int i = 0; i < AppState.customers.getMcount(); i++) {
-            Customer c = AppState.customers.getValue(i);
-            if (c != null && customerId.equals(c.customerId)) return c;
-        }
-        return null;
     }
 
     // dropdown text

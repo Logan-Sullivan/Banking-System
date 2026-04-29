@@ -1,51 +1,82 @@
-<?xml version="1.0" encoding="UTF-8"?>
+import Utils.AppState;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
+public class SetCDAndCheckingRatesController {
 
-<VBox spacing="18.0"
-      xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="SetCDAndCheckingRatesController"
-      alignment="CENTER">
-    <padding>
-        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
-    </padding>
+    @FXML
+    private ComboBox<String> accountTypeCombo;
+    @FXML
+    private TextField rateField;
+    @FXML
+    private TextField effectiveDateField;
+    @FXML
+    private Label statusLabel;
 
-    <Label text="Set Interest Rates on CDs / Checking" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+    @FXML
+    private void updateAccountRate(ActionEvent event) {
+        String accountType = accountTypeCombo == null ? null : accountTypeCombo.getValue();
+        String rateText = rateField == null ? "" : rateField.getText().trim();
+        String effectiveDate = effectiveDateField == null ? "" : effectiveDateField.getText().trim();
 
-    <VBox spacing="10.0" maxWidth="320.0">
-        <Label text="Account Type" />
-        <ComboBox prefWidth="280.0">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="CD Account" />
-                    <String fx:value="That's My Bank Checking" />
-                    <String fx:value="Gold / Diamond Checking" />
-                    <String fx:value="Savings Account" />
-                </FXCollections>
-            </items>
-        </ComboBox>
+        if (accountType == null || accountType.isBlank()) {
+            statusLabel.setText("Select an account type.");
+            return;
+        }
 
-        <Label text="Interest Rate" />
-        <TextField promptText="Enter interest rate" prefWidth="280.0" />
+        if (effectiveDate.isBlank()) {
+            statusLabel.setText("Enter an effective date.");
+            return;
+        }
 
-        <Label text="Effective Date" />
-        <TextField promptText="Enter effective date" prefWidth="280.0" />
-    </VBox>
+        double rate;
+        try {
+            rate = Double.parseDouble(rateText);
+        } catch (Exception e) {
+            statusLabel.setText("Enter a valid interest rate.");
+            return;
+        }
 
-    <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Update Account Rate" prefWidth="180.0" />
-        <Button text="Return to Manager Screen"
-                prefWidth="180.0"
-                onAction="#returnToManagerScreen" />
-    </VBox>
+        if (rate < 0) {
+            statusLabel.setText("Rate cannot be negative.");
+            return;
+        }
 
-    <Label text="After updating, return to the Manager Screen." style="-fx-font-size: 12px;" />
-</VBox>
+        // stores the global manager-set rate
+        AppState.accountRates.put(accountType, rate);
+
+        // stores the effective date for the global rate
+        AppState.accountEffectiveDates.put(accountType, effectiveDate);
+
+        // status message for global rate behavior
+        if (accountType.equals("CD Account")) {
+            statusLabel.setText("CD rate updated for newly established CDs.");
+        } else if (accountType.equals("Savings Account")) {
+            statusLabel.setText("Savings rate updated for new savings accounts.");
+        } else if (accountType.equals("Gold Diamond Checking Account")) {
+            statusLabel.setText("Gold/Diamond checking rate stored for future calculations.");
+        } else {
+            statusLabel.setText("Account rate updated.");
+        }
+    }
+
+    @FXML
+    private void returnToManagerScreen(ActionEvent event) {
+        try {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/ManagerScreen.fxml")));
+            stage.setScene(scene);
+            stage.setTitle("Manager Screen");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

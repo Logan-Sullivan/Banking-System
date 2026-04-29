@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -21,28 +19,32 @@
     <Label text="Withdraw from Account" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
     <VBox spacing="10.0" maxWidth="320.0">
-        <Label text="Customer ID" />
-        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="280.0" />
+        <Label text="Customer Name" />
+        <ComboBox fx:id="customerIdComboBox"
+                  onAction="#onCustomerChosen"
+                  promptText="Select customer name"
+                  prefWidth="280.0" />
 
-        <Label text="Account Number" />
-        <TextField promptText="Enter account number" prefWidth="280.0" />
-
-        <Label text="Account Type" />
-        <ComboBox prefWidth="280.0">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Savings Account" />
-                    <String fx:value="Checking Account" />
-                </FXCollections>
-            </items>
-        </ComboBox>
+        <Label text="Account" />
+        <ComboBox fx:id="accountComboBox"
+                  promptText="Select account"
+                  prefWidth="280.0" />
 
         <Label text="Withdrawal Amount" />
-        <TextField fx:id="withdrawAmountField" promptText="Enter withdrawal amount" prefWidth="280.0" />
+        <TextField fx:id="withdrawAmountField"
+                   promptText="Enter withdrawal amount"
+                   prefWidth="280.0" />
     </VBox>
+    <Label text="Withdrawal Output" style="-fx-font-weight: bold;" />
+
+    <Label fx:id="previousBalanceLabel" text="Previous Balance: $" style="-fx-font-size: 12px;" />
+    <Label fx:id="withdrawalAmountLabel" text="Withdrawal Amount: $" style="-fx-font-size: 12px;" />
+    <Label fx:id="newBalanceLabel" text="New Balance: $" style="-fx-font-size: 12px;" />
 
     <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Withdraw" prefWidth="180.0" onAction="#withdrawPressed" />
+        <Button text="Withdraw"
+                prefWidth="180.0"
+                onAction="#withdrawPressed" />
         <Button text="Return to Teller Screen"
                 prefWidth="180.0"
                 onAction="#returnToTellerScreen" />

@@ -18,6 +18,10 @@ public class ManagerScreenController {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void goToCreateNewLoan(ActionEvent event) {
+        switchScreen(event, "/Manager/CreateNewLoan.fxml", "Create New Loan");
+    }
 
     @FXML
     private void goToSetLoanInterestRates(ActionEvent event) {
