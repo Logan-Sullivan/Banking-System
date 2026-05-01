@@ -21,14 +21,13 @@
     <Label text="Establish CDs" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
     <VBox spacing="10.0" maxWidth="320.0">
-        <Label text="Customer ID" />
-        <TextField promptText="Enter customer ID" prefWidth="280.0" />
-
-        <Label text="CD Account Number" />
-        <TextField promptText="Enter CD account number" prefWidth="280.0" />
+        <Label text="Customer Name" />
+        <ComboBox fx:id="customerComboBox"
+                  promptText="Select customer name"
+                  prefWidth="280.0" />
 
         <Label text="CD Term" />
-        <ComboBox prefWidth="280.0">
+        <ComboBox fx:id="cdTermComboBox" prefWidth="280.0">
             <items>
                 <FXCollections fx:factory="observableArrayList">
                     <String fx:value="6 Months" />
@@ -40,18 +39,25 @@
         </ComboBox>
 
         <Label text="Initial Deposit" />
-        <TextField promptText="Enter initial deposit" prefWidth="280.0" />
+        <TextField fx:id="initialDepositField" promptText="Enter initial deposit" prefWidth="280.0" />
 
         <Label text="Interest Rate" />
-        <TextField promptText="Enter CD interest rate" prefWidth="280.0" />
+        <TextField fx:id="interestRateField" promptText="Enter CD interest rate" prefWidth="280.0" />
+
+        <Label text="Early Withdrawal Penalty" />
+        <TextField fx:id="earlyPenaltyField" text="50.0" promptText="Enter penalty amount" prefWidth="280.0" />
     </VBox>
 
     <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Establish CD" prefWidth="180.0" />
+        <Button text="Establish CD"
+                prefWidth="180.0"
+                onAction="#establishCDPressed" />
         <Button text="Return to Manager Screen"
                 prefWidth="180.0"
                 onAction="#returnToManagerScreen" />
     </VBox>
 
-    <Label text="After processing, return to the Manager Screen." style="-fx-font-size: 12px;" />
+    <Label fx:id="statusLabel"
+           text="After processing, return to the Manager Screen."
+           style="-fx-font-size: 12px;" />
 </VBox>

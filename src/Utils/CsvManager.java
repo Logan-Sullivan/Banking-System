@@ -1,10 +1,13 @@
 package Utils;
 import Account_Classes.*;
+import Loan_Classes.*;
 import User_Classes.Customer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -35,81 +38,118 @@ public class CsvManager {
         File file = new File(path);
 
         try (Scanner fileReader = new Scanner(file)) {
+            Customer customer = null;
             while (fileReader.hasNextLine()) {
-                String text = fileReader.nextLine();
+                String text = fileReader.nextLine().trim();
+                if (text.isEmpty()) continue;
                 String[] formattedText = text.split(",", -1);
-                if (formattedText.length < 7) continue;
+                if (formattedText.length >= 7) {
+                    customer = (new Customer(formattedText[0], formattedText[1], formattedText[2],
+                            formattedText[3], formattedText[4], formattedText[5], formattedText[6]));
+                    CustomerList.addInOrder(customer);
+                    continue;
+                }
+                if (customer == null) continue;
+                String[] vars = text.split("\\|");
+                String itemType = vars[0];
 
-                Customer customer = (new Customer(formattedText[0], formattedText[1], formattedText[2], formattedText[3], formattedText[4], formattedText[5], formattedText[6]));
+                switch (itemType) {
+                    case "SavingsAccount" -> {
+                        String id = vars[1];
+                        double rate = Double.parseDouble(vars[2]);
+                        String freq = vars[3];
+                        boolean overdraft = vars[4].equals(("1"));
+                        double balance = Double.parseDouble(vars[5]);
 
-                for (int i = 7; i < formattedText.length; i++) {
-                    if (formattedText[i].isEmpty()) continue;
-
-                    String[] accountVars = formattedText[i].split("\\|");
-                    String accountType = accountVars[0];
-
-                    switch (accountType) {
-                        case "SavingsAccount" -> {
-                            double rate = Double.parseDouble(accountVars[1]);
-                            String freq = accountVars[2];
-                            boolean overdraft = accountVars[3].equals(("1"));
-                            double balance = Double.parseDouble(accountVars[4]);
-
-                            SavingsAccount savings = new SavingsAccount(rate, freq, overdraft, balance);
-                            customer.accountList.add(savings);
+                        SavingsAccount savings = new SavingsAccount(id, rate, freq, overdraft, balance);
+                        customer.accountList.add(savings);
+                    }
+                    case "TMBAccount" -> {
+                        String id = vars[1];
+                        double balance = Double.parseDouble(vars[2]);
+                        TMBAccount tmb = new TMBAccount(id, null, balance);
+                        String overdraftAccount = vars.length > 3 ? vars[3] : "";
+                        if (!overdraftAccount.isEmpty()){
+                            for (Account saveAccount : customer.accountList){
+                                if (saveAccount instanceof SavingsAccount savings && savings.accountNumber.equals(overdraftAccount)){
+                                    tmb.setOverdraftProtAccount(savings);
+                                }
+                            }
                         }
-                        case "TMBAccount" -> {
-                            double balance = Double.parseDouble(accountVars[1]);
-                            int overdraftIdentifier = Integer.parseInt(accountVars[2]);
-                            TMBAccount tmb = new TMBAccount(null, balance);
-                            tmb.overdraftIdentifier = overdraftIdentifier;
-                            customer.accountList.add(tmb);
+                        customer.accountList.add(tmb);
+                    }
+                    case "GDAccount" -> {
+                        String id = vars[1];
+                        double balance = Double.parseDouble(vars[2]);
+                        boolean flexible = Boolean.parseBoolean(vars[3]);
+
+                        GDAccount gd = new GDAccount(id, null, balance, flexible);
+                        String interestAccount = vars.length > 4 ? vars[4] : "";
+                        if (!interestAccount.isEmpty()){
+                            for (Account saveAccount : customer.accountList){
+                                if (saveAccount instanceof SavingsAccount savings && savings.accountNumber.equals(interestAccount)){
+                                    gd.setInterestAccount(savings);
+                                }
+                            }
                         }
-                        case "GDAccount" -> {
-                            double balance = Double.parseDouble(accountVars[1]);
-                            boolean flexible = Boolean.parseBoolean(accountVars[2]);
+                        customer.accountList.add(gd);
+                    }
+                    case "CDAccount" -> {
+                        String id = vars[1];
+                        double balance = Double.parseDouble(vars[2]);
+                        double rate = Double.parseDouble(vars[3]);
+                        String date = vars[4];
+                        double penalty = Double.parseDouble(vars[5]);
 
-                            GDAccount gd = new GDAccount(null, balance, flexible);
-                            customer.accountList.add(gd);
-                        }
-                        case "CDAccount" -> {
-                            double balance = Double.parseDouble(accountVars[1]);
-                            double rate = Double.parseDouble(accountVars[2]);
-                            String date = accountVars[3];
-                            double penalty = Double.parseDouble(accountVars[4]);
+                        CDAccount cd = new CDAccount(id, balance, rate, null, penalty);
+                        customer.accountList.add(cd);
+                    }
+                    case "MortgageLoan" ->{
+                        String id = vars[1];
+                        int term = Integer.parseInt(vars[2]);
+                        double rate = Double.parseDouble(vars[3]);
+                        double principle = Double.parseDouble(vars[4]);
+                        MortgageLoan mgl = new MortgageLoan(id, term, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
+                        customer.payoffList.add(mgl);
+                    }
+                    case "ShortTermLoan" -> {
+                        String id = vars[1];
+                        double rate = Double.parseDouble(vars[2]);
+                        double principle = Double.parseDouble(vars[3]);
 
-                            CDAccount cd = new CDAccount(balance, rate, null, penalty);
-                            customer.accountList.add(cd);
-                        }
-                    } // End of account switch
-                } // end of forloop
-
-                CustomerList.addInOrder(customer);
-            }//end of while loop
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }//end of try-catch 1
-    }//end of fetchCustsFromCSV
-
-    // CS: gets all TMB accounts in the list and links them to the proper savingsaccount if applicable. I'll make it work for all checkings soon
-    public static void handleOverdrafts(ArrayListManager<Customer> CustomerList){
-        for (int i = 0; i < CustomerList.getMcount(); i++){
-            Customer customer = CustomerList.getValue(i);
-
-            for (Account account : customer.accountList){
-                if (account instanceof TMBAccount tmb){
-                    int identifier = tmb.overdraftIdentifier;
-                    if (identifier >= 0 && identifier < customer.accountList.size()){
-                        Account overdraftAccount = customer.accountList.get(identifier);
-
-                        if (overdraftAccount instanceof SavingsAccount saving){
-                            tmb.setOverdraftProtAccount(saving);
+                        ShortTermLoan stl = new ShortTermLoan(id, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
+                        customer.payoffList.add(stl);
+                    }
+                    case "CreditCard" -> {
+                        String id = vars[1];
+                        double duePayment = Double.parseDouble(vars[2]);
+                        double rate = Double.parseDouble(vars[3]);
+                        String status = vars[4];
+                        boolean problem = Boolean.parseBoolean(vars[5]);
+                        double limit = 0;
+                        CreditCard card = new CreditCard(id, duePayment, rate, status, problem, limit, LocalDate.now());
+                        customer.payoffList.add(card);
+                    }
+                    case "Transaction" -> {
+                        String cardId = vars[1];
+                        for (Loan loan : customer.payoffList){
+                            if (loan instanceof CreditCard card && card.id.equals(cardId)){
+                                int id = Integer.parseInt(vars[2]);
+                                double amount = Double.parseDouble(vars[3]);
+                                String desc = vars[4];
+                                Transaction transaction = new Transaction(amount, id,  desc);
+                                card.transactions.add(transaction);
+                            }
                         }
                     }
-                }
-            } // end of for account loop
-        } // end of for things in customerlist
-    } // end of handleOverdrafts
+                } // End of account switch
+            } // end of forloop
+        }//end of while loop
+        catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }//end of try-catch 1
+    }
+    //end of fetchCustsFromCSV
 
     // CS: I hate this.
     public static void writeCustomersToCsv(ArrayListManager<Customer> CustomerList) {
@@ -123,38 +163,77 @@ public class CsvManager {
                 StringBuilder customerBuilder = new StringBuilder();
                 customerBuilder.append(customer.customerId).append(",").append(customer.address).append(",").append(customer.city)
                         .append(",").append(customer.state).append(",").append(customer.zipcode).append(",").append(customer.firstName)
-                        .append(",").append(customer.lastName);
+                        .append(",").append(customer.lastName).append("\n");
 
                 for (Account account : customer.accountList){
-                    customerBuilder.append(",");
 
                     if (account instanceof SavingsAccount saving){
                         // Ike: write full savings data so reload matches the parser format
                         customerBuilder.append(saving.getClass().getSimpleName()).append("|")
+                                .append(saving.accountNumber).append("|")
                                 .append(saving.getInterestRate()).append("|")
                                 .append(saving.getCompoundFreq()).append("|")
                                 .append(saving.isOverdraftBackup() ? "1" : "0").append("|")
-                                .append(saving.getBalance());
+                                .append(saving.getBalance()).append("\n");
                     }
                     else if (account instanceof TMBAccount tmb){
+                        String overdraft;
+                        if (tmb.getOverdraftProtAccount() != null) overdraft = tmb.getOverdraftProtAccount().accountNumber;
+                        else overdraft = "";
                         customerBuilder.append(tmb.getClass().getSimpleName()).append("|")
+                                .append(tmb.accountNumber).append("|")
                                 .append(tmb.getBalance()).append("|")
-                                .append(tmb.overdraftIdentifier);
+                                .append(overdraft).append("\n");
                     }
                     else if (account instanceof GDAccount gd){
+                        String overdraft;
+                        if (gd.getOverdraftProtAccount() != null) overdraft = gd.getOverdraftProtAccount().accountNumber;
+                        else overdraft = "";
                         customerBuilder.append(gd.getClass().getSimpleName()).append("|")
+                                .append(gd.accountNumber).append("|")
                                 .append(gd.getBalance()).append("|")
-                                .append(gd.dailyRateFlexible);
+                                .append(gd.dailyRateFlexible).append("|")
+                                .append(overdraft).append("\n");
                     }
                     else if (account instanceof CDAccount cd){
                         customerBuilder.append(cd.getClass().getSimpleName()).append("|")
+                                .append(cd.accountNumber).append("|")
                                 .append(cd.getBalance()).append("|")
                                 .append(cd.fixedRate).append("|")
                                 .append(cd.maturityDate).append("|")
-                                .append(cd.earlyPenalty);
+                                .append(cd.earlyPenalty).append("\n");
                     }
                 } // end of the for loop
-
+                for (Loan loan : customer.payoffList){
+                    if (loan instanceof MortgageLoan mgl){
+                        customerBuilder.append(mgl.getClass().getSimpleName()).append("|")
+                                .append(mgl.id).append("|")
+                                .append(mgl.term).append("|")
+                                .append(mgl.interest_rate).append("|")
+                                .append(mgl.principal).append("\n");
+                    }
+                    else if (loan instanceof ShortTermLoan stl){
+                        customerBuilder.append(stl.getClass().getSimpleName()).append("|")
+                                .append(stl.id).append("|")
+                                .append(stl.interest_rate).append("|")
+                                .append(stl.principal).append("\n");
+                    }
+                    else if (loan instanceof CreditCard card){
+                        customerBuilder.append(card.getClass().getSimpleName()).append("|")
+                                .append(card.id).append("|")
+                                .append(card.getBalance()).append("|")
+                                .append(card.interest_rate).append("|")
+                                .append(card.getIsProblemAccount()).append("|")
+                                .append(card.creditLimit).append("\n");
+                        for (Transaction transaction : card.transactions){
+                            customerBuilder.append("    Transaction|")
+                                    .append(card.id).append("|")
+                                    .append(transaction.transactionId).append("|")
+                                    .append(transaction.amount).append("|")
+                                    .append(transaction.description).append("\n");
+                        }
+                    }
+                }
                 Writer.write(customerBuilder.toString());
                 Writer.write("\n");
             }
@@ -201,3 +280,4 @@ public class CsvManager {
     }
 
 }
+// I really wish I used hashmaps for this, but at this point I'm limit testing myself by getting it to work

@@ -20,32 +20,33 @@
 
     <Label text="Set Interest Rates on CDs / Checking" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
-    <VBox spacing="10.0" maxWidth="320.0">
-        <Label text="Account Type" />
-        <ComboBox prefWidth="280.0">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="CD Account" />
-                    <String fx:value="That's My Bank Checking" />
+	    <VBox spacing="10.0" maxWidth="320.0">
+	        <Label text="Account Type" />
+	        <ComboBox fx:id="accountTypeCombo" prefWidth="280.0">
+	            <items>
+	                <FXCollections fx:factory="observableArrayList">
+	                    <String fx:value="CD Account" />
+	                    <String fx:value="That's My Bank Checking" />
                     <String fx:value="Gold / Diamond Checking" />
                     <String fx:value="Savings Account" />
                 </FXCollections>
             </items>
-        </ComboBox>
+	        </ComboBox>
 
-        <Label text="Interest Rate" />
-        <TextField promptText="Enter interest rate" prefWidth="280.0" />
+	        <Label text="Interest Rate" />
+	        <TextField fx:id="rateField" promptText="Enter interest rate" prefWidth="280.0" />
 
-        <Label text="Effective Date" />
-        <TextField promptText="Enter effective date" prefWidth="280.0" />
-    </VBox>
+	        <Label text="Effective Date" />
+	        <TextField fx:id="effectiveDateField" promptText="Enter effective date" prefWidth="280.0" />
+	    </VBox>
 
-    <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Update Account Rate" prefWidth="180.0" />
-        <Button text="Return to Manager Screen"
-                prefWidth="180.0"
-                onAction="#returnToManagerScreen" />
-    </VBox>
+	    <VBox spacing="12.0" alignment="CENTER">
+	        <Button text="Update Account Rate" prefWidth="180.0" onAction="#updateAccountRate" />
+	        <Button text="Return to Manager Screen"
+	                prefWidth="180.0"
+	                onAction="#returnToManagerScreen" />
+	    </VBox>
 
-    <Label text="After updating, return to the Manager Screen." style="-fx-font-size: 12px;" />
-</VBox>
+	    <Label fx:id="statusLabel" style="-fx-font-size: 12px;" />
+	    <Label text="After updating, return to the Manager Screen." style="-fx-font-size: 12px;" />
+	</VBox>

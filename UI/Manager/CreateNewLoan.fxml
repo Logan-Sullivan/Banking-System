@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="18.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="CreateNewLoanController"
+      alignment="CENTER">
+    <padding>
+        <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+    </padding>
+
+    <Label text="Create New Loan" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+
+    <VBox spacing="10.0" maxWidth="320.0">
+        <Label text="Customer Name" />
+        <ComboBox fx:id="customerComboBox"
+                  promptText="Select customer name"
+                  prefWidth="280.0" />
+
+        <Label text="Loan Type" />
+        <ComboBox fx:id="loanTypeComboBox"
+                  onAction="#onLoanTypeChosen"
+                  prefWidth="280.0">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Mortgage Loan" />
+                    <String fx:value="Short Term Loan" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Label text="Principal / Loan Amount" />
+        <TextField fx:id="principalField"
+                   promptText="Enter loan amount"
+                   prefWidth="280.0" />
+
+        <Label text="Interest Rate" />
+        <TextField fx:id="interestRateField"
+                   promptText="Enter interest rate"
+                   prefWidth="280.0" />
+
+        <Label fx:id="termLabel" text="Loan Term" visible="false" />
+        <ComboBox fx:id="termComboBox"
+                  visible="false"
+                  prefWidth="280.0">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="15" />
+                    <String fx:value="30" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+
+        <Label text="Due Date Grace Period" />
+        <TextField fx:id="dueDateIntervalField"
+                   text="10"
+                   promptText="Enter days"
+                   prefWidth="280.0" />
+    </VBox>
+
+    <VBox spacing="12.0" alignment="CENTER">
+        <Button text="Create Loan"
+                prefWidth="180.0"
+                onAction="#createLoanPressed" />
+        <Button text="Return to Manager Screen"
+                prefWidth="180.0"
+                onAction="#returnToManagerScreen" />
+    </VBox>
+
+    <Label fx:id="statusLabel"
+           text="Loan persistence is not wired yet."
+           style="-fx-font-size: 12px;" />
+</VBox>

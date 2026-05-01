@@ -1,9 +1,13 @@
 package Loan_Classes;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public abstract class Loan {
-    double principal,interest_rate,currentPaymentDue;
+    public String id = UUID.randomUUID().toString();
+    public double principal;
+    public double interest_rate;
+    double currentPaymentDue;
     boolean isProblemAccount = false;
     String LoanStatus;
     LocalDate loanRepaymentDate;
@@ -62,7 +66,7 @@ public abstract class Loan {
         dateSinceLastBalanceChange = paymentDate;
         System.out.println("Balance is now " + this.currentPaymentDue);
         return 0;
-        
+
     }
     public double closeAccount(){
         return currentPaymentDue+principal;
