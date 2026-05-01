@@ -1,5 +1,4 @@
 package Utils;
-import Account_Classes.*;
 import User_Classes.Customer;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Scanner;
+
+import Account_Classes.*;
 
 public class CsvManager {
     //i think this best belongs in the manger class once thats made as i believe they will be the ones with permissions to close an account

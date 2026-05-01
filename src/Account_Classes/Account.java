@@ -1,8 +1,10 @@
 package Account_Classes;
 import User_Classes.*;
+import Utils.Services;
+
 import java.util.UUID;
 
-public abstract class Account{
+public abstract class Account extends Services{
     public String accountNumber = UUID.randomUUID().toString();
     private double balance;
     Customer Owner;

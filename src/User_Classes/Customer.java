@@ -1,7 +1,8 @@
 package User_Classes;
-import Account_Classes.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import Account_Classes.*;
 
 public class Customer implements Comparable {
     public String customerId,address,city,state,zipcode,firstName,lastName;

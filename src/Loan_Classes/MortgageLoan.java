@@ -3,6 +3,8 @@ package Loan_Classes;
 import java.time.LocalDate;
 import java.time.Period;
 
+//TODO: Check is not broken
+
 /**
  * This class is for mortgage loans. These are term based loans, and funciton as such with no modifications
  */
@@ -22,7 +24,8 @@ public class MortgageLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = dueDateInterval;
-        this.loanRepaymentDate = currentDate;
+        this.loanRepaymentDate = currentDate.plusMonths(1);
+        this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
 
@@ -37,7 +40,8 @@ public class MortgageLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = dueDateInterval;
-        this.loanRepaymentDate = LocalDate.now();
+        this.loanRepaymentDate = LocalDate.now().plusMonths(1);
+        this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
 
@@ -52,7 +56,8 @@ public class MortgageLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = Period.ofDays(10);
-        this.loanRepaymentDate = currentDate;
+        this.loanRepaymentDate = currentDate.plusMonths(1);
+        this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
 
@@ -67,7 +72,17 @@ public class MortgageLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = Period.ofDays(10);
-        this.loanRepaymentDate = LocalDate.now();
+        this.loanRepaymentDate = LocalDate.now().plusMonths(1);
+        this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
+    }
+    public void updateTime(LocalDate currentDate, int days){
+        if(currentDate == loanRepaymentDate || (loanRepaymentDate.lengthOfMonth() > currentDate.lengthOfMonth() && currentDate.getDayOfMonth() == currentDate.lengthOfMonth())){
+            flagIfMissed(currentDate);
+            loanPaymentCycle();
+        }
+        if(currentDate == paymentDueDate || (paymentDueDate.lengthOfMonth() > currentDate.lengthOfMonth() && currentDate.getDayOfMonth() == currentDate.lengthOfMonth())){
+            applyLateFee(currentDate);
+        }
     }
 }
