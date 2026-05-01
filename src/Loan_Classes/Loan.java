@@ -2,9 +2,9 @@ package Loan_Classes;
 
 import java.time.LocalDate;
 
-import Utils.Services;
+import Utils.TimeService;
 
-public abstract class Loan extends Services{
+public abstract class Loan extends TimeService{
     double principal,interest_rate,currentPaymentDue;
     boolean isProblemAccount = false;
     String LoanStatus;

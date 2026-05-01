@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Timeline {
     LocalDate lastUpdatedDate;//This time is primarily used by the system to check how much time has been passed since it has last been updated
-    ArrayList<Services> serviceList = new ArrayList<Services>();
+    ArrayList<TimeService> serviceList = new ArrayList<TimeService>();
     
     public Timeline(){
         lastUpdatedDate = LocalDate.now();
@@ -28,10 +28,10 @@ public class Timeline {
     public void setDate(LocalDate date){//Might need much stricter access attached to it in a real system, but handy for demonstrations
         this.lastUpdatedDate = date;
     }
-    public void addServices(Services x){
+    public void addServices(TimeService x){
         serviceList.add(x);
     }
-    public void removeServices(Services x){
+    public void removeServices(TimeService x){
         serviceList.remove(x);
     }
     public LocalDate getLastUpdatedDate(){

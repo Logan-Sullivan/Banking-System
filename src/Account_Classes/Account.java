@@ -1,10 +1,10 @@
 package Account_Classes;
 import User_Classes.*;
-import Utils.Services;
+import Utils.TimeService;
 
 import java.util.UUID;
 
-public abstract class Account extends Services{
+public abstract class Account extends TimeService{
     public String accountNumber = UUID.randomUUID().toString();
     private double balance;
     Customer Owner;
