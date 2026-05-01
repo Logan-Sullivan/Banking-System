@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
-//TODO: Check is not broken
 
 /**
  * This class is for short term loans. These are term based loans, and funciton as such with no modifications
@@ -20,7 +19,7 @@ public class ShortTermLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = dueDateInterval;
-        this.loanRepaymentDate = currentDate.plusMonths(1);
+        this.loanRepaymentDate = currentDate;
         this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
@@ -31,7 +30,7 @@ public class ShortTermLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = dueDateInterval;
-        this.loanRepaymentDate = LocalDate.now().plusMonths(1);
+        this.loanRepaymentDate = LocalDate.now();
         this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);//Loans are paid at a set interval
         this.calculateLoanRepayment();
     }
@@ -42,7 +41,7 @@ public class ShortTermLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = Period.ofDays(10);
-        this.loanRepaymentDate = currentDate.plusMonths(1);
+        this.loanRepaymentDate = currentDate;
         this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);//Loans are paid at a set interval
         this.calculateLoanRepayment();
     }
@@ -53,7 +52,7 @@ public class ShortTermLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = Period.ofDays(10);
-        this.loanRepaymentDate = LocalDate.now().plusMonths(1);
+        this.loanRepaymentDate = LocalDate.now();
         this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);//at default they are paid monthly
         this.calculateLoanRepayment();
     }

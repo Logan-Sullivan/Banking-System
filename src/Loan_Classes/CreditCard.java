@@ -5,7 +5,6 @@ import Utils.Transaction;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-//TODO: Check you did not break the whole thingy
 
 public class CreditCard extends Loan {
     double creditLimit;
@@ -28,9 +27,6 @@ public class CreditCard extends Loan {
     public void updateTime(LocalDate currentDate, int days){
         generateBill(currentDate);
         checkBillStatus(currentDate);
-        if(currentDate.getDayOfMonth() == currentDate.lengthOfMonth()){
-            applyInterest();
-        }
 
     }
 
@@ -56,7 +52,8 @@ public class CreditCard extends Loan {
                 averageDue += currentPaymentDue * (currentDay.toEpochDay()-dateSinceLastBalanceChange.toEpochDay()-1);
                 //Now for a bit of a monster of a line: this calculates the finance charge, which is the average amount of charge of the credit card for the month
                 //This line takes the total amounts over all of the days and divides it by the number of days of the previous month
-                financeCharge = averageDue/(LocalDate.of(currentDay.getYear(), currentDay.minusMonths(1).getMonth(), 1).getMonth().length(currentDay.isLeapYear()));
+                int numDaysInLastMonth = (LocalDate.of(currentDay.getYear(), currentDay.minusMonths(1).getMonth(), 1).getMonth().length(currentDay.isLeapYear()));
+                financeCharge = averageDue/numDaysInLastMonth;
             }else{
                 averageDue = 0.0;
             }

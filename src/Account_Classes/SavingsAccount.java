@@ -23,9 +23,7 @@ public class SavingsAccount extends Account{
      * @param daysPassed the time passed between the previous time and the current time
      */
     public void updateTime(LocalDate currentTime, int daysPassed){
-        for(int i = 0; i < daysPassed; i++){
-            applyDailyInterest();
-        }
+        applyDailyInterest();
     }
 
     /**
@@ -45,7 +43,7 @@ public class SavingsAccount extends Account{
 
     public void applyDailyInterest(){
         System.out.println("Daily interest applied: " + this.getBalance());
-        this.deposit(this.getBalance()*intrestRate);
+        this.deposit(this.getBalance()*(intrestRate/100));
         System.out.print(" → "+ this.getBalance() +"\n");
     }
 

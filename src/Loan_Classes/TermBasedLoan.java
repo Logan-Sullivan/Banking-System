@@ -5,12 +5,6 @@ import Utils.Transaction;
 import java.time.LocalDate;
 import java.time.Period;
 
-//TODO: Check you did not break stuff. Consider refactoring to use LocalDate rather than term and termMonthsLeft. (two LocalDates for when created and when it'll end?)
-//Doesn't seem needed to add the two. Just check if amount is > 0 and how close it is to next month
-//Might be needed in the case of the system going down when month rolls over while amount is > 0, where it should be flagged
-//Instead maybe add cross-over-month bool to updateTime feature? Multiple features use the month as a checkpoint... Would also avoid problems with double-applying rollovers
-//Can't do that because what if the time increment goes over multiple months
-//Instead store date created that will be used to determine when rollovers occur for the account.
 
 /**
  * This class is for term based loans
@@ -123,7 +117,7 @@ public abstract class TermBasedLoan extends Loan{
      * @param currentDate The current date
      */
     public void applyLateFee(LocalDate currentDate){
-        if(currentDate.compareTo(paymentDueDate)>0 && !lateFeeApplied){
+        if(currentDate.compareTo(paymentDueDate)==0 && !lateFeeApplied){
             this.currentPaymentDue = currentPaymentDue + lateFee;
             lateFeeApplied = true;
         }
