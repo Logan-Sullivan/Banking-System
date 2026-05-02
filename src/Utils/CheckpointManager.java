@@ -1,7 +1,7 @@
 package Utils;
 import Utils.CsvManager;
-import User_Classes.*;
 import Account_Classes.*;
+import User_Classes.*;
 public class CheckpointManager {
 
     public static void EXEC_CHECKPOINT(ArrayListManager<Customer> CustomerList){

@@ -2,8 +2,9 @@ package Loan_Classes;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import Utils.TimeService;
 
-public abstract class Loan {
+public abstract class Loan extends TimeService{
     public String id = UUID.randomUUID().toString();
     public double principal;
     public double interest_rate;

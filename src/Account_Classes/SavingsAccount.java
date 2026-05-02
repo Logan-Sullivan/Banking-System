@@ -1,4 +1,5 @@
 package Account_Classes;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class SavingsAccount extends Account{
@@ -14,6 +15,15 @@ public class SavingsAccount extends Account{
         this.compoundFreq = "31";
         this.overdraftBackup = true;
         this.deposit((int)(Math.random()*1000));
+    }
+
+    /**
+     * This function applies the interest for the specified number of days that have passed
+     * @param currentTime the current time of the system
+     * @param daysPassed the time passed between the previous time and the current time
+     */
+    public void updateTime(LocalDate currentTime, int daysPassed){
+        applyDailyInterest();
     }
 
     /**
@@ -41,7 +51,7 @@ public class SavingsAccount extends Account{
 
     public void applyDailyInterest(){
         System.out.println("Daily interest applied: " + this.getBalance());
-        this.deposit(this.getBalance()*intrestRate);
+        this.deposit(this.getBalance()*(intrestRate/100));
         System.out.print(" → "+ this.getBalance() +"\n");
     }
 

@@ -1,13 +1,14 @@
 package Account_Classes;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CDAccount extends Account {
     public double fixedRate;
-    public Date maturityDate;
+    public LocalDate maturityDate;
     public double earlyPenalty;
 
-    public CDAccount(double balance, double fixedRate, Date maturityDate, double earlyPenalty){
+    public CDAccount(double balance, double fixedRate, LocalDate maturityDate, double earlyPenalty){
         this.deposit(balance);
         this.fixedRate = fixedRate;
         this.maturityDate = maturityDate;
@@ -23,6 +24,11 @@ public class CDAccount extends Account {
 
     public void rollover(){
         System.out.println("Account Rollover Notice");
+    }
+
+    
+    public void updateTime(LocalDate currentDate, int daysPassed){
+        //Class currently lacks interest rate functionality. Once that is added, this can be update to handle it
     }
 
     public void earlyWithdraw(){

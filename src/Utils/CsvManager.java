@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import Account_Classes.*;
+
 public class CsvManager {
     //i think this best belongs in the manger class once thats made as i believe they will be the ones with permissions to close an account
     public static void removeCustFromArrBySSN(ArrayListManager<Customer> CustomerList, String SSN) {

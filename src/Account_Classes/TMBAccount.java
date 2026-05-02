@@ -1,5 +1,7 @@
 package Account_Classes;
 
+import java.time.LocalDate;
+
 public class TMBAccount extends CheckingsAccount {
     double tsFee = 0.75;
     double monthlyTransferFee = 1.25;
@@ -11,6 +13,10 @@ public class TMBAccount extends CheckingsAccount {
 
     public TMBAccount(String id, SavingsAccount overdraftAccount, double balance) {
         super(id, overdraftAccount, balance);
+    }
+
+    public void updateTime(LocalDate currentTime, int daysPassed){
+        //There is no daily changes for the TMB accounts, so nothing to do here
     }
 
     @Override

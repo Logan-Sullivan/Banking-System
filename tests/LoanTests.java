@@ -140,7 +140,7 @@ public class LoanTests {
         LocalDate day = LocalDate.of(2025, 5, 1);
         exampleCard.generateBill(day);
         day = LocalDate.of(2025, 5, 10);
-        exampleCard.checkBillStatus();
+        exampleCard.checkBillStatus(day);
         assertTrue(exampleCard.getIsProblemAccount());
     }
 }

@@ -1,5 +1,7 @@
 package Account_Classes;
 
+import java.time.LocalDate;
+
 public class GDAccount extends CheckingsAccount {
     SavingsAccount interestAccount;
     double minimumBalance  = 5000.0;
@@ -23,6 +25,14 @@ public class GDAccount extends CheckingsAccount {
     public void applyInterest(){
         this.interestRate = 0.5 * interestAccount.getBalance();
     } // CS: Unsure if this is supposed to be a += or otherwise cause it says changes daily, but I assume it's called daily
+
+    public void updateTime(LocalDate currentDate, int daysPassed){
+        //Currently the complete functionality of the interest calculation is not implemented. When it does, this function will need to be updated
+        applyInterest();
+        if(currentDate.getDayOfMonth() == currentDate.lengthOfMonth()){
+            //Needs to have the interest get sent to the account
+        }
+    }
 
     public void checkMinBalance(){
 
