@@ -1,12 +1,13 @@
 package User_Classes;
+import Account_Classes.*;
+import Loan_Classes.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import Account_Classes.*;
 
 public class Customer implements Comparable {
     public String customerId,address,city,state,zipcode,firstName,lastName;
     public List<Account> accountList = new ArrayList<>();
+    public List<Loan> payoffList = new ArrayList<>();
 
     public Customer(){
         this.customerId = (int)(Math.random()*100000000)+"";

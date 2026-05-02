@@ -41,7 +41,6 @@ public class LoadBasicDataController {
         // Reset in-memory state, then load from CSV.
         AppState.customers = new ArrayListManager<>();
         CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, path);
-        CsvManager.handleOverdrafts(AppState.customers);
 
         if (statusLabel != null) {
             statusLabel.setText("Loaded " + AppState.customers.getMcount() + " customers from " + path);
@@ -63,19 +62,70 @@ public class LoadBasicDataController {
 
         int lines = 0;
         int invalid = 0;
+
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                lines++;
-                // Expected: customerId,address,city,state,zipcode,firstName,lastName
-                String[] parts = line.split(",", -1);
-                if (parts.length < 7) {
-                    invalid++;
+                String line = scanner.nextLine().trim();
+
+                if (line.isBlank()) {
                     continue;
                 }
-                if (parts[0].isBlank() || parts[5].isBlank() || parts[6].isBlank()) {
-                    invalid++;
+
+                lines++;
+
+                // customer row
+                if (line.contains(",")) {
+                    String[] parts = line.split(",", -1);
+
+                    if (parts.length < 7) {
+                        invalid++;
+                        continue;
+                    }
+
+                    if (parts[0].isBlank() || parts[5].isBlank() || parts[6].isBlank()) {
+                        invalid++;
+                    }
+
+                    continue;
                 }
+
+                // account / loan / transaction row
+                if (line.contains("|")) {
+                    String[] parts = line.split("\\|", -1);
+                    String type = parts[0];
+
+                    switch (type) {
+                        case "SavingsAccount" -> {
+                            if (parts.length < 6) invalid++;
+                        }
+                        case "TMBAccount" -> {
+                            if (parts.length < 3) invalid++;
+                        }
+                        case "GDAccount" -> {
+                            if (parts.length < 4) invalid++;
+                        }
+                        case "CDAccount" -> {
+                            if (parts.length < 6) invalid++;
+                        }
+                        case "MortgageLoan" -> {
+                            if (parts.length < 5) invalid++;
+                        }
+                        case "ShortTermLoan" -> {
+                            if (parts.length < 4) invalid++;
+                        }
+                        case "CreditCard" -> {
+                            if (parts.length < 6) invalid++;
+                        }
+                        case "Transaction" -> {
+                            if (parts.length < 5) invalid++;
+                        }
+                        default -> invalid++;
+                    }
+
+                    continue;
+                }
+
+                invalid++;
             }
         } catch (Exception e) {
             if (statusLabel != null) statusLabel.setText("Validation error: " + e.getMessage());
@@ -84,7 +134,7 @@ public class LoadBasicDataController {
 
         if (statusLabel != null) {
             statusLabel.setText(invalid == 0
-                    ? ("Validation OK: " + lines + " rows")
+                    ? ("Validation OK: " + lines + " data row(s)")
                     : ("Validation found " + invalid + " invalid row(s) out of " + lines));
         }
     }

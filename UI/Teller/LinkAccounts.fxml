@@ -20,10 +20,10 @@
     <Label text="Link Accounts" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
     <VBox spacing="10.0" maxWidth="320.0">
-        <Label text="Customer ID" />
+        <Label text="Customer name" />
         <ComboBox fx:id="customerIdComboBox"
                   onAction="#onCustomerChosen"
-                  promptText="Select customer ID"
+                  promptText="Select customer"
                   prefWidth="280.0" />
 
         <Label text="Primary Account" />

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 
 public class CreditCard extends Loan {
-    double creditLimit;
-    ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+    public double creditLimit;
+    public ArrayList<Transaction> transactions = new ArrayList<Transaction>();
     double averageDue;
     double financeCharge = 0.0;
 
@@ -30,6 +30,17 @@ public class CreditCard extends Loan {
 
     }
 
+    public CreditCard(String id, double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit, LocalDate dateCreated) {
+        this.id = id;
+        this.currentPaymentDue = currentPaymentDue;
+        this.interest_rate = interest_rate;
+        LoanStatus = loanStatus;
+        this.isProblemAccount = isProblemAccount;
+        this.creditLimit = creditLimit;
+        this.loanRepaymentDate = dateCreated.plusMonths(1).withDayOfMonth(10);
+        this.averageDue = currentPaymentDue;
+        this.dateSinceLastBalanceChange = dateCreated;
+    }
 
     /**
      * checks if charge being made would exceed credit limit if it does return false otherwise return true

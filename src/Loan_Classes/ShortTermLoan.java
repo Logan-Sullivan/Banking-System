@@ -57,6 +57,17 @@ public class ShortTermLoan extends TermBasedLoan{
         this.calculateLoanRepayment();
     }
 
+    public ShortTermLoan(String id, double interestRate,double principle, Period dueDateInterval, LocalDate currentDate){
+        this.id = id;
+        this.term = 5;
+        termMonthsLeft = term*12;
+        this.interest_rate = interestRate;
+        this.principal = principle;
+        this.dueDateInterval = dueDateInterval;
+        this.loanRepaymentDate = currentDate.plus(dueDateInterval);//Loans are paid at a set interval
+        this.calculateLoanRepayment();
+    }
+
     public void updateTime(LocalDate currentDate, int days){
         if(currentDate == loanRepaymentDate || (loanRepaymentDate.lengthOfMonth() > currentDate.lengthOfMonth() && currentDate.getDayOfMonth() == currentDate.lengthOfMonth())){
             flagIfMissed(currentDate);

@@ -15,6 +15,12 @@ public abstract class CheckingsAccount extends Account{
         this.deposit(balance);
     }
 
+    public CheckingsAccount(String id, SavingsAccount overdraftAccount, double balance){
+        this.accountNumber = id;
+        this.overdraftProtAccount = overdraftAccount;
+        this.deposit(balance);
+    }
+
     public void stopPayment(int checknumber){
 
     }

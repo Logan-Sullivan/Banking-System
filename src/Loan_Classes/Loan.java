@@ -1,11 +1,14 @@
 package Loan_Classes;
 
 import java.time.LocalDate;
-
+import java.util.UUID;
 import Utils.TimeService;
 
 public abstract class Loan extends TimeService{
-    double principal,interest_rate,currentPaymentDue;
+    public String id = UUID.randomUUID().toString();
+    public double principal;
+    public double interest_rate;
+    double currentPaymentDue;
     boolean isProblemAccount = false;
     String LoanStatus;
     LocalDate loanRepaymentDate;
@@ -64,7 +67,7 @@ public abstract class Loan extends TimeService{
         dateSinceLastBalanceChange = paymentDate;
         System.out.println("Balance is now " + this.currentPaymentDue);
         return 0;
-        
+
     }
     public double closeAccount(){
         return currentPaymentDue+principal;

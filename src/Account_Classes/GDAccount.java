@@ -13,6 +13,11 @@ public class GDAccount extends CheckingsAccount {
         this.dailyRateFlexible = flexibleRate;
     }
 
+    public GDAccount(String id, SavingsAccount overdraftAccount, double balance, boolean flexibleRate) {
+        super(id, overdraftAccount, balance);
+        this.dailyRateFlexible = flexibleRate;
+    }
+
     public void setInterestAccount(SavingsAccount account){
         this.interestAccount = account;
     }

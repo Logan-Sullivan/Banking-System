@@ -41,6 +41,14 @@ public class SavingsAccount extends Account{
         this.deposit(balance);
     }
 
+    public SavingsAccount(String id, double intrestRate, String compoundFreq, boolean overdraftBackup,double balance){
+        this.accountNumber = id;
+        this.intrestRate = intrestRate;
+        this.compoundFreq = compoundFreq;
+        this.overdraftBackup = overdraftBackup;
+        this.deposit(balance);
+    }
+
     public void applyDailyInterest(){
         System.out.println("Daily interest applied: " + this.getBalance());
         this.deposit(this.getBalance()*(intrestRate/100));

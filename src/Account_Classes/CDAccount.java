@@ -14,6 +14,13 @@ public class CDAccount extends Account {
         this.maturityDate = maturityDate;
         this.earlyPenalty = earlyPenalty;
     } // CS: awful.
+    public CDAccount(String id, double balance, double fixedRate, Date maturityDate, double earlyPenalty){
+        this.accountNumber = id;
+        this.deposit(balance);
+        this.fixedRate = fixedRate;
+        this.maturityDate = maturityDate;
+        this.earlyPenalty = earlyPenalty;
+    }
 
     public void rollover(){
         System.out.println("Account Rollover Notice");

@@ -75,6 +75,23 @@ public class MortgageLoan extends TermBasedLoan{
         this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
+    
+    public MortgageLoan(String id, int term,double interestRate,double principle, Period dueDateInterval, LocalDate currentDate){
+        if(term == 15 || term == 30){//Terms can only be 15 or 30 years for mortgage
+            this.term = term;
+        }else{
+            System.out.println("Term is not of a valid duration");
+            this.term = 15;//Default to 15
+        }
+        this.id = id;
+        this.termMonthsLeft = term*12;
+        this.interest_rate = interestRate;
+        this.principal = principle;
+        this.dueDateInterval = dueDateInterval;
+        this.loanRepaymentDate = currentDate;
+        this.calculateLoanRepayment();
+    }
+
     public void updateTime(LocalDate currentDate, int days){
         if(currentDate.compareTo(loanRepaymentDate) == 0){
             flagIfMissed(currentDate);

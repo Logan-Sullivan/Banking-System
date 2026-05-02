@@ -11,6 +11,10 @@ public class TMBAccount extends CheckingsAccount {
         super(overdraftAccount, balance);
     }
 
+    public TMBAccount(String id, SavingsAccount overdraftAccount, double balance) {
+        super(id, overdraftAccount, balance);
+    }
+
     public void updateTime(LocalDate currentTime, int daysPassed){
         //There is no daily changes for the TMB accounts, so nothing to do here
     }

@@ -14,7 +14,7 @@ import java.time.Period;
  * So, the monthly amount is calculated to ensure that the loan terminates at the expected term
  */
 public abstract class TermBasedLoan extends Loan{
-    int term;
+    public int term;
     double monthlyPayment;
     int termMonthsLeft;
     double lateFee = 75.00;
