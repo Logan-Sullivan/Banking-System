@@ -1,4 +1,4 @@
-package Account_Classes;
+package tests.Account_Classes;
 
 import java.time.LocalDate;
 
@@ -37,6 +37,12 @@ public class GDAccount extends CheckingsAccount {
     public void checkMinBalance(){
 
     } // CS: Sorry not a clue what this is for? is it just if balance is lower than minimum? or returning minimum?
+
+    @Override // Pointed to nothing cause interest is separated
+    // should've just changed it to overdraft, but that'd cause more problems.
+    public SavingsAccount getOverdraftProtAccount() {
+        return interestAccount;
+    }
 
     public void chargeBelowMinFee(double tsFee){
         if (this.getBalance() < minimumBalance) this.withdraw(tsFee);
