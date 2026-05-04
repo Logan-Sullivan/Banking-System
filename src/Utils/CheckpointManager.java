@@ -1,7 +1,7 @@
-package tests.Utils;
-import tests.Utils.CsvManager;
-import tests.Account_Classes.*;
-import tests.User_Classes.*;
+package Utils;
+import Utils.CsvManager;
+import Account_Classes.*;
+import User_Classes.*;
 public class CheckpointManager {
 
     public static void EXEC_CHECKPOINT(ArrayListManager<Customer> CustomerList, Timeline timeline){
