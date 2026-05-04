@@ -46,7 +46,7 @@ public class CsvManager {
                 if (text.isEmpty()) continue;
                 if (text.startsWith("DATE,")){ // Checks the file for Date, parses it into timeline
                     String dateString = text.split(",")[1];
-                    LocalDate savedDate = LocalDate.parse(dateStart);
+                    LocalDate savedDate = LocalDate.parse(dateString);
                     timeline.setDate(savedDate);
                     continue;
                 }
