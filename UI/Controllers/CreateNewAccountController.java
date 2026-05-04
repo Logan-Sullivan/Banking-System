@@ -4,6 +4,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import Account_Classes.SavingsAccount;
@@ -196,9 +197,9 @@ public class CreateNewAccountController {
             }
 
             case "CD Account" -> {
-                double rate = 0.05;
-
-                CDAccount cd = new CDAccount(balance, rate, null, 50.0);
+                double rate = AppState.accountRates.getOrDefault("CD Account", 0.05);
+                LocalDate maturityDate = LocalDate.now().plusMonths(12);
+                CDAccount cd = new CDAccount(balance, rate, maturityDate, 50.0);
                 selectedCustomer.accountList.add(cd);
             }
         }
