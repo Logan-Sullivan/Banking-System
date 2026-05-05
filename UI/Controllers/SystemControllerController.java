@@ -33,6 +33,10 @@ public class SystemControllerController {
     private void goToRunSimpleRegressionTests(ActionEvent event) {
         switchScreen(event, "/SystemController/RunSimpleRegressionTests.fxml", "Run Simple Regression Tests");
     }
+    @FXML
+    private void openProgressTimeScreen(ActionEvent event) {
+        switchScreen(event, "/SystemController/ProgressTime.fxml", "Progress Time");
+    }
 
     @FXML
     private void goToTellerScreen(ActionEvent event) {
