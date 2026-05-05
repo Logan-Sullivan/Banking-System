@@ -1,4 +1,4 @@
-//NOTE: this is a very basic implementation of the file
+//NOTE: this is a very basic implementation of the file. 
 //It can only handle making Savings accounts, and does not link them to the customers
 //It instead stores the saving accounts in a csv to be read later.
 import java.io.File;
