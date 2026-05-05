@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,10 +147,17 @@ public class WithdrawFromAccountController {
             return;
         }
 
-        // since CD is in a questionable state, I put this temporarily
-        if (account instanceof CDAccount) {
-            if (statusLabel != null) statusLabel.setText("CD withdrawals are not supported here yet.");
-            return;
+        if (account instanceof CDAccount cdAccount) {
+            double needed = amount;
+            if (cdAccount.maturityDate != null && LocalDate.now().isBefore(cdAccount.maturityDate)) {
+                needed += cdAccount.earlyPenalty;
+            }
+            if (needed > account.getBalance()) {
+                if (statusLabel != null) {
+                    statusLabel.setText("Insufficient funds. Balance: $" + String.format("%.2f", account.getBalance()));
+                }
+                return;
+            }
         }
 
         // prevent over-withdrawing from savings

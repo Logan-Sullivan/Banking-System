@@ -201,6 +201,13 @@ public class CreateNewAccountController {
                 // add new TMB account to timeline
                 AppState.timeline.addServices(tmb);
             }
+            
+            case "CD Account" -> {
+                double rate = AppState.accountRates.getOrDefault("CD Account", 0.05);
+                LocalDate maturityDate = LocalDate.now().plusMonths(12);
+                CDAccount cd = new CDAccount(balance, rate, maturityDate, 50.0);
+                selectedCustomer.accountList.add(cd);
+            }
         }
 
         Utils.CsvManager.writeCustomersToCsv(AppState.customers);
