@@ -86,7 +86,7 @@ public class CreateNewCustomerController {
             }
         }
 
-        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName);
+        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName, 2);
         AppState.customers.addInOrder(customer);
 
         //  save customers/accounts/loans with CsvManager

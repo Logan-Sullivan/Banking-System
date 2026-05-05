@@ -5,31 +5,33 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import Account_Classes.*;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayListManager<Customer> CustomerList = new ArrayListManager<>();
+        //ATM Card testing
+        Customer atmTestCus = new Customer();
+        atmTestCus.accountList.add(new SavingsAccount(10.0, "daily", false, 1000.0));
+        System.out.println("Created test customer: " + atmTestCus.customerId + " with a savings account balance 1000.");
 
-        fetchCustsFromCSV(CustomerList,"src/data.csv");
-        removeCustFromArrBySSN(CustomerList,"28733578");
-        // example of customer object to save the data
-        writeToArrayToCsv(CustomerList,"src/data.csv");
-        Customer newCustomer = new Customer();
-        SavingsAccount newSavings = new SavingsAccount();
-        TMBAccount newCheckings = new TMBAccount(null, 100);
-        SavingsAccount blankSavings = new SavingsAccount(1, "Test for Overdraft", false, 0);
-        newCustomer.accountList.add(newCheckings);
-        newCustomer.accountList.add(newSavings);
-        String extraData = "";
-        PrintUtil.saveCustomerData(newCustomer, newSavings, extraData);
-        System.out.println("----------Transferring first amount----------");
-        newCheckings.transfer(newSavings, 25);
-        System.out.println("----------Transfer over---------- \nsetting overdraft account, and overdrafting");
-        newCheckings.setOverdraftProtAccount(newSavings);
-        newCheckings.transfer(blankSavings, 76);
+        System.out.println("Attempting ATM withdraw with customer: " + atmTestCus.customerId);
+        atmTestCus.atm.ATMWithdraw(100);
+        System.out.println("New balance is: " + atmTestCus.accountList.get(0).getBalance());
+
+        System.out.println("Attempting excessive withdraws...");
+        atmTestCus.atm.ATMWithdraw(10);
+        atmTestCus.atm.ATMWithdraw(10);
+
+        System.out.println("Try to exceed account balance...");
+        atmTestCus.atm.updateTime(LocalDate.now(), 1);
+        atmTestCus.atm.ATMWithdraw(1500);
+
+        System.out.println("Now test that account search is working");
+        atmTestCus.accountList.add(new TMBAccount(null, 2000));
+        atmTestCus.atm.ATMWithdraw(1500);
 
     }
     public static void writeToArrayToCsv(ArrayListManager<Customer> CustomerList, String fileName){
@@ -77,7 +79,7 @@ public class Main {
                 Zip = formattedText[4];
                 First = formattedText[5];
                 Last = formattedText[6];
-                CustomerList.addInOrder(new Customer(SSN,Address,City,State,Zip,First,Last));
+                CustomerList.addInOrder(new Customer(SSN,Address,City,State,Zip,First,Last,2));
 
             }
         } catch (FileNotFoundException e){

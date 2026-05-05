@@ -53,8 +53,10 @@ public class CsvManager {
                 String[] formattedText = text.split(",", -1);
                 if (formattedText.length >= 7) {
                     customer = (new Customer(formattedText[0], formattedText[1], formattedText[2],
-                            formattedText[3], formattedText[4], formattedText[5], formattedText[6]));
+                            formattedText[3], formattedText[4], formattedText[5], formattedText[6], 
+                            Integer.parseInt(formattedText[7]))); //M.C. Integer represents ATM state
                     CustomerList.addInOrder(customer);
+                    AppState.timeline.addServices(customer.atm); //M.C. Add the atm card to the timeservices
                     continue;
                 }
                 if (customer == null) continue;
@@ -218,7 +220,7 @@ public class CsvManager {
                 StringBuilder customerBuilder = new StringBuilder();
                 customerBuilder.append(customer.customerId).append(",").append(customer.address).append(",").append(customer.city)
                         .append(",").append(customer.state).append(",").append(customer.zipcode).append(",").append(customer.firstName)
-                        .append(",").append(customer.lastName).append("\n");
+                        .append(",").append(customer.lastName).append(customer.atm.getWithdraws()).append("\n");
 
                 for (Account account : customer.accountList){
 
