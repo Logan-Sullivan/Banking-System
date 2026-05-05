@@ -64,7 +64,9 @@ public class ShortTermLoan extends TermBasedLoan{
         this.interest_rate = interestRate;
         this.principal = principle;
         this.dueDateInterval = dueDateInterval;
-        this.loanRepaymentDate = currentDate.plus(dueDateInterval);//Loans are paid at a set interval
+        this.loanRepaymentDate = currentDate.plus(dueDateInterval);
+        // set payment due date so time progression does not crash
+        this.paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         this.calculateLoanRepayment();
     }
 
