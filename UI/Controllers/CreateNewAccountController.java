@@ -1,4 +1,4 @@
-//NOTE: this is a very basic implementation of the file
+//NOTE: this is a very basic implementation of the file. 
 //It can only handle making Savings accounts, and does not link them to the customers
 //It instead stores the saving accounts in a csv to be read later.
 import java.io.File;
@@ -182,6 +182,8 @@ public class CreateNewAccountController {
 
                 SavingsAccount savings = new SavingsAccount(rate, freq, false, balance);
                 selectedCustomer.accountList.add(savings);
+                // add new savings account to timeline
+                AppState.timeline.addServices(savings);
             }
 
             case "Gold Diamond Checking Account" -> {
@@ -189,13 +191,17 @@ public class CreateNewAccountController {
 
                 GDAccount gd = new GDAccount(null, balance, flexible);
                 selectedCustomer.accountList.add(gd);
+                // add new GD account to timeline
+                AppState.timeline.addServices(gd);
             }
 
             case "That's My Bank Checking Account" -> {
                 TMBAccount tmb = new TMBAccount(null, balance);
                 selectedCustomer.accountList.add(tmb);
+                // add new TMB account to timeline
+                AppState.timeline.addServices(tmb);
             }
-
+            
             case "CD Account" -> {
                 double rate = AppState.accountRates.getOrDefault("CD Account", 0.05);
                 LocalDate maturityDate = LocalDate.now().plusMonths(12);
@@ -210,4 +216,5 @@ public class CreateNewAccountController {
         statusLabel.setVisible(true);
     }
 }
+
 

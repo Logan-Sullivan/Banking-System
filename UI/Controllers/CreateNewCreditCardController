@@ -1,0 +1,139 @@
+import Loan_Classes.CreditCard;
+import User_Classes.Customer;
+import Utils.AppState;
+import Utils.CsvManager;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CreateNewCreditCardController {
+
+    @FXML
+    private ComboBox<String> customerComboBox;
+
+    @FXML
+    private TextField creditLimitField;
+
+    @FXML
+    private TextField interestRateField;
+
+    @FXML
+    private TextField startingBalanceField;
+
+    @FXML
+    private Label statusLabel;
+
+    private final Map<String, Customer> customerMap = new HashMap<>();
+
+    @FXML
+    public void initialize() {
+        if (customerComboBox == null) return;
+
+        customerComboBox.getItems().clear();
+        customerMap.clear();
+
+        if (AppState.customers != null) {
+            for (int i = 0; i < AppState.customers.getMcount(); i++) {
+                Customer c = AppState.customers.getValue(i);
+                
+                if (c != null && c.firstName != null && c.lastName != null) {
+                    String displayName = c.firstName + " " + c.lastName;
+                    customerComboBox.getItems().add(displayName);
+                    customerMap.put(displayName, c);
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void createCreditCardPressed(ActionEvent event) {
+        String selectedCustomerName = customerComboBox.getValue();
+
+        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
+            statusLabel.setText("Please select a customer");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        Customer selectedCustomer = customerMap.get(selectedCustomerName);
+
+        if (selectedCustomer == null) {
+            statusLabel.setText("Customer not found");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        double creditLimit;
+        double interestRate;
+        double startingBalance;
+
+        try {
+            creditLimit = Double.parseDouble(creditLimitField.getText());
+            interestRate = Double.parseDouble(interestRateField.getText());
+
+            String balanceText = startingBalanceField.getText();
+            if (balanceText == null || balanceText.isBlank()) {
+                startingBalance = 0.0;
+            } else {
+                startingBalance = Double.parseDouble(balanceText);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Invalid credit card input");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        if (creditLimit <= 0) {
+            statusLabel.setText("Credit limit must be greater than 0");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        if (startingBalance > creditLimit) {
+            statusLabel.setText("Starting balance cannot exceed credit limit");
+            statusLabel.setVisible(true);
+            return;
+        }
+
+        CreditCard card = new CreditCard(
+                startingBalance,
+                interestRate,
+                "Current",
+                false,
+                creditLimit,
+                AppState.timeline.getLastUpdatedDate()
+        );
+        
+        selectedCustomer.payoffList.add(card);
+        
+        AppState.timeline.addServices(card);
+
+        CsvManager.writeCustomersToCsv(AppState.customers);
+
+        statusLabel.setText("Credit card created successfully!");
+        statusLabel.setVisible(true);
+    }
+
+    @FXML
+    private void returnToTellerScreen(ActionEvent event) {
+        try {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/TellerScreen.fxml")));
+            stage.setScene(scene);
+            stage.setTitle("Teller Screen");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

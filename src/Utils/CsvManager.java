@@ -71,6 +71,8 @@ public class CsvManager {
 
                         SavingsAccount savings = new SavingsAccount(id, rate, freq, overdraft, balance);
                         customer.accountList.add(savings);
+                        // add savings account to timeline
+                        AppState.timeline.addServices(savings);
                     }
                     case "TMBAccount" -> {
                         String id = vars[1];
@@ -85,6 +87,8 @@ public class CsvManager {
                             }
                         }
                         customer.accountList.add(tmb);
+                        // add TMB account to timeline
+                        AppState.timeline.addServices(tmb);
                     }
                     case "GDAccount" -> {
                         String id = vars[1];
@@ -101,6 +105,8 @@ public class CsvManager {
                             }
                         }
                         customer.accountList.add(gd);
+                        // add GD account to timeline
+                        AppState.timeline.addServices(gd);
                     }
                     case "CDAccount" -> {
                         String id = vars[1];
@@ -120,6 +126,8 @@ public class CsvManager {
 
                         CDAccount cd = new CDAccount(id, balance, rate, maturityDate, penalty);
                         customer.accountList.add(cd);
+                        // add CD account to timeline
+                        AppState.timeline.addServices(cd);
                     }
                     case "MortgageLoan" ->{
                         String id = vars[1];
@@ -128,6 +136,8 @@ public class CsvManager {
                         double principle = Double.parseDouble(vars[4]);
                         MortgageLoan mgl = new MortgageLoan(id, term, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
                         customer.payoffList.add(mgl);
+                        // add mortgage loan to timeline
+                        AppState.timeline.addServices(mgl);
                     }
                     case "ShortTermLoan" -> {
                         String id = vars[1];
@@ -136,6 +146,8 @@ public class CsvManager {
 
                         ShortTermLoan stl = new ShortTermLoan(id, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
                         customer.payoffList.add(stl);
+                        // add short term loan to timeline
+                        AppState.timeline.addServices(stl);
                     }
                     case "CreditCard" -> {
                         String id = vars[1];
@@ -143,9 +155,12 @@ public class CsvManager {
                         double rate = Double.parseDouble(vars[3]);
                         String status = vars[4];
                         boolean problem = Boolean.parseBoolean(vars[5]);
-                        double limit = 0;
+                        // reload credit card limit from CSV
+                        double limit = Double.parseDouble(vars[6]);
                         CreditCard card = new CreditCard(id, duePayment, rate, status, problem, limit, LocalDate.now());
                         customer.payoffList.add(card);
+                        // add credit card to timeline
+                        AppState.timeline.addServices(card);
                     }
                     case "Transaction" -> {
                         String cardId = vars[1];
@@ -263,6 +278,7 @@ public class CsvManager {
                                 .append(card.id).append("|")
                                 .append(card.getBalance()).append("|")
                                 .append(card.interest_rate).append("|")
+                                .append("Current").append("|")
                                 .append(card.getIsProblemAccount()).append("|")
                                 .append(card.creditLimit).append("\n");
                         for (Transaction transaction : card.transactions){

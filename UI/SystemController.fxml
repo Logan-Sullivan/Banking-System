@@ -22,6 +22,7 @@
         <Button text="Check Point" prefWidth="260.0" onAction="#goToCheckPoint"/>
         <Button text="Load Basic Data" prefWidth="260.0" onAction="#goToLoadBasicData"/>
         <Button text="Run Simple Regression Tests" prefWidth="260.0" onAction="#goToRunSimpleRegressionTests"/>
+        <Button text="Progress Time" onAction="#openProgressTimeScreen" prefWidth="260.0"/>
     </VBox>
 
     <Label text="Select Actor Screen" style="-fx-font-size: 18px; -fx-font-weight: bold;" />

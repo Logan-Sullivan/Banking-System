@@ -13,6 +13,7 @@ public final class AppState {
     public static HashMap<String, String> loanEffectiveDates = new HashMap<>();
     public static HashMap<String, Double> accountRates = new HashMap<>();
     public static HashMap<String, String> accountEffectiveDates = new HashMap<>();
+    public static Timeline timeline = new Timeline();
 
     private AppState() {
     }

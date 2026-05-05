@@ -23,6 +23,9 @@
         <Button text="Create New Customer"
                 prefWidth="280.0"
                 onAction="#goToCreateNewCustomer" />
+        <Button text="Create New Credit Card"
+                onAction="#goToCreateNewCreditCard"
+                prefWidth="280.0" />
         <Button text="Link Accounts"
                 prefWidth="280.0"
                 onAction="#goToLinkAccounts" />

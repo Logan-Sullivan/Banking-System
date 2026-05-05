@@ -23,6 +23,10 @@ public class GDAccount extends CheckingsAccount {
     }
 
     public void applyInterest(){
+        // prevent crash if GD account has no linked savings account yet
+        if (interestAccount == null) {
+            return;
+        }
         this.interestRate = 0.5 * interestAccount.getBalance();
     } // CS: Unsure if this is supposed to be a += or otherwise cause it says changes daily, but I assume it's called daily
 

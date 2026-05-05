@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
@@ -11,6 +12,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="CreditCardScreenController"
       alignment="CENTER">
+
     <padding>
         <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
     </padding>
@@ -19,22 +21,45 @@
 
     <VBox spacing="10.0" maxWidth="320.0">
         <Label text="Customer ID" />
-        <TextField promptText="Enter customer ID" prefWidth="280.0" />
+        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="280.0" />
 
-        <Label text="Credit Card Account Number" />
-        <TextField promptText="Enter credit card account number" prefWidth="280.0" />
+        <Label text="Credit Card" />
+        <ComboBox fx:id="creditCardComboBox"
+                  promptText="Select credit card"
+                  prefWidth="280.0" />
+
+        <Button text="Search Customer" onAction="#searchCustomerPressed" prefWidth="280.0" />
+        <Label text="Charge Amount" />
+        <TextField fx:id="chargeAmountField"
+                   promptText="Enter charge amount"
+                   prefWidth="280.0" />
+
+        <Label text="Charge Description" />
+        <TextField fx:id="chargeDescriptionField"
+                   promptText="Enter charge description"
+                   prefWidth="280.0" />
+
+        <Button text="Charge Credit Card"
+                onAction="#chargeCreditCardPressed"
+                prefWidth="180.0" />
 
         <Label text="Current Balance" />
-        <TextField promptText="Display current balance" prefWidth="280.0" editable="false" />
+        <TextField fx:id="currentBalanceField" promptText="Display current balance" prefWidth="280.0" editable="false" />
+
+        <Label text="Pay From Account" />
+        <ComboBox fx:id="payFromAccountComboBox"
+                  promptText="Select account to pay from"
+                  prefWidth="280.0" />
 
         <Label text="Payment Amount" />
-        <TextField promptText="Enter payment amount" prefWidth="280.0" />
+        <TextField fx:id="paymentAmountField" promptText="Enter payment amount" prefWidth="280.0" />
     </VBox>
 
     <VBox spacing="12.0" alignment="CENTER">
-        <Button text="Make Payment" prefWidth="180.0" />
+        <Button text="Make Payment" prefWidth="180.0" onAction="#makePaymentPressed" />
         <Button text="Return to Customer Screen" prefWidth="180.0" onAction="#returnToCustomerScreen" />
     </VBox>
 
-    <Label text="After payment, return to the Customer Screen." style="-fx-font-size: 12px;" />
+    <Label fx:id="statusLabel" text="" visible="false" style="-fx-font-size: 12px;" />
+
 </VBox>
