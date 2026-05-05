@@ -53,9 +53,14 @@ public class TellerScreenController {
     private void goToReviewCustomerAccounts(ActionEvent event) {
         switchScreen(event, "/Teller/ReviewCustomerAccounts.fxml", "Review Customer Accounts");
     }
+    @FXML
+    private void goToCreateNewCreditCard(ActionEvent event) {
+        switchScreen(event, "/Teller/CreateNewCreditCard.fxml", "Create New Credit Card");
+    }
 
     @FXML
     private void returnToSystemController(ActionEvent event) {
         switchScreen(event, "/SystemController.fxml", "System Controller");
     }
 }
+
