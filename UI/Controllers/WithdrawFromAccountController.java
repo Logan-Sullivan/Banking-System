@@ -177,7 +177,7 @@ public class WithdrawFromAccountController {
 
         double newBalance = account.getBalance();
 
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         if (previousBalanceLabel != null) {
             previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));

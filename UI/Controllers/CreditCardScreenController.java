@@ -120,7 +120,7 @@ public class CreditCardScreenController {
         selectedCard.makePayment(paymentAmount, AppState.timeline.getLastUpdatedDate());
 
         currentBalanceField.setText(String.valueOf(selectedCard.getBalance()));
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         refreshCardDropdown();
         showStatus("Payment made successfully.");
@@ -153,7 +153,7 @@ public class CreditCardScreenController {
         selectedCard.makeTransaction(chargeAmount, description, AppState.timeline.getLastUpdatedDate());
 
         currentBalanceField.setText(String.valueOf(selectedCard.getBalance()));
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         refreshCardDropdown();
         showStatus("Credit card charged successfully.");

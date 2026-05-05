@@ -152,7 +152,7 @@ public class DepositToAccountController {
         double newBalance = account.getBalance();
 
         // save updated balances back to CSV
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         if (previousBalanceLabel != null) {
             previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));

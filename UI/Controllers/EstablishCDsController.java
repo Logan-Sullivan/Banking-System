@@ -128,7 +128,7 @@ public class EstablishCDsController {
         selectedCustomer.accountList.add(cd);
 
         // save CD to CSV
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         statusLabel.setText("CD established for " + selectedCustomer.firstName + " " + selectedCustomer.lastName
                 + ". Term: " + cdTerm + ".");

@@ -165,7 +165,7 @@ public class LinkAccountsController {
 
             checking.setOverdraftProtAccount(savings);
 
-            CsvManager.writeCustomersToCsv(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
             if (statusLabel != null) {
                 statusLabel.setText("Overdraft backup linked successfully.");
