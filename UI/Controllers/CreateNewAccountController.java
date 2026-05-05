@@ -4,6 +4,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import Account_Classes.SavingsAccount;
@@ -181,6 +182,8 @@ public class CreateNewAccountController {
 
                 SavingsAccount savings = new SavingsAccount(rate, freq, false, balance);
                 selectedCustomer.accountList.add(savings);
+                // add new savings account to timeline
+                AppState.timeline.addServices(savings);
             }
 
             case "Gold Diamond Checking Account" -> {
@@ -188,18 +191,15 @@ public class CreateNewAccountController {
 
                 GDAccount gd = new GDAccount(null, balance, flexible);
                 selectedCustomer.accountList.add(gd);
+                // add new GD account to timeline
+                AppState.timeline.addServices(gd);
             }
 
             case "That's My Bank Checking Account" -> {
                 TMBAccount tmb = new TMBAccount(null, balance);
                 selectedCustomer.accountList.add(tmb);
-            }
-
-            case "CD Account" -> {
-                double rate = 0.05;
-
-                CDAccount cd = new CDAccount(balance, rate, null, 50.0);
-                selectedCustomer.accountList.add(cd);
+                // add new TMB account to timeline
+                AppState.timeline.addServices(tmb);
             }
         }
 
@@ -209,4 +209,5 @@ public class CreateNewAccountController {
         statusLabel.setVisible(true);
     }
 }
+
 
