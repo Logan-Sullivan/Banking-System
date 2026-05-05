@@ -103,7 +103,16 @@ public class CsvManager {
                         String date = vars[4];
                         double penalty = Double.parseDouble(vars[5]);
 
-                        CDAccount cd = new CDAccount(id, balance, rate, null, penalty);
+                        LocalDate maturityDate = null;
+                        if (date != null && !date.isBlank() && !date.equals("null")) {
+                            try {
+                                maturityDate = LocalDate.parse(date);
+                            } catch (Exception ignored) {
+                                maturityDate = null;
+                            }
+                        }
+
+                        CDAccount cd = new CDAccount(id, balance, rate, maturityDate, penalty);
                         customer.accountList.add(cd);
                     }
                     case "MortgageLoan" ->{

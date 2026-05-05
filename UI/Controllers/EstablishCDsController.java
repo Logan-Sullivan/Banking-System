@@ -12,8 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,7 +119,7 @@ public class EstablishCDsController {
         }
 
         // calculate maturity date from selected term
-        Date maturityDate = calculateMaturityDate(months);
+        LocalDate maturityDate = calculateMaturityDate(months);
 
         // create CD with calculated maturity date
         CDAccount cd = new CDAccount(initialDeposit, interestRate, maturityDate, earlyPenalty);
@@ -147,10 +146,8 @@ public class EstablishCDsController {
     }
 
     // calculates future maturity date
-    private Date calculateMaturityDate(int months) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, months);
-        return calendar.getTime();
+    private LocalDate calculateMaturityDate(int months) {
+        return LocalDate.now().plusMonths(months);
     }
 
     @FXML
