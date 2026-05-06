@@ -2,20 +2,18 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import Account_Classes.ATMCard;
 import Account_Classes.Account;
-import Account_Classes.CDAccount;
-import Account_Classes.CheckingsAccount;
-import Account_Classes.GDAccount;
-import Account_Classes.SavingsAccount;
-import Account_Classes.TMBAccount;
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -42,8 +40,7 @@ public class ATMWithdrawController {
     @FXML
     private Label newBalanceLabel;
 
-    // maps dropdown text back to real account object
-    private final Map<String, Account> accountMap = new HashMap<>();
+    private Customer cus;
 
     // maps customer name back to real customer object
     private final Map<String, Customer> customerMap = new HashMap<>();
@@ -73,12 +70,6 @@ public class ATMWithdrawController {
     private void onCustomerChosen(ActionEvent event) {
         String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
 
-        accountMap.clear();
-
-        if (accountComboBox != null) {
-            accountComboBox.getItems().clear();
-        }
-
         if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) {
                 statusLabel.setText("Please select a customer.");
@@ -87,46 +78,32 @@ public class ATMWithdrawController {
         }
 
         // find customer from name map
-        Customer customer = customerMap.get(selectedCustomerName);
-        if (customer == null) {
+        cus = customerMap.get(selectedCustomerName);
+        if (cus == null) {
             if (statusLabel != null) {
                 statusLabel.setText("Customer not found.");
             }
             return;
         }
 
-        if (customer.accountList != null) {
-            for (Account account : customer.accountList) {
-                String displayText = buildAccountDisplay(account);
-                accountMap.put(displayText, account);
-
-                if (accountComboBox != null) {
-                    accountComboBox.getItems().add(displayText);
-                }
-            }
-        }
-
         if (statusLabel != null) {
-            statusLabel.setText("Customer accounts loaded.");
+            statusLabel.setText("Customer loaded.");
         }
     }
 
+    //Modified from generic withdraw to cater to ATM withdraws
     @FXML
     private void withdrawPressed(ActionEvent event) {
-        String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
-        String accountSelection = accountComboBox == null ? "" : accountComboBox.getValue();
         String amountText = withdrawAmountField == null ? "" : withdrawAmountField.getText();
-
-        if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
+        
+        //Check that we have a customer selected, then get the atm card
+        if (cus == null) {
             if (statusLabel != null) statusLabel.setText("Please select a customer.");
             return;
         }
+        ATMCard atm = cus.atm;
 
-        if (accountSelection == null || accountSelection.isBlank()) {
-            if (statusLabel != null) statusLabel.setText("Please select an account.");
-            return;
-        }
-
+        //Verify that amount is valid
         double amount;
         try {
             amount = Double.parseDouble(amountText);
@@ -134,47 +111,28 @@ public class ATMWithdrawController {
             if (statusLabel != null) statusLabel.setText("Please enter a valid withdrawal amount.");
             return;
         }
-
         if (amount <= 0) {
             if (statusLabel != null) statusLabel.setText("Amount must be greater than 0.");
             return;
         }
 
-        Account account = accountMap.get(accountSelection);
-        if (account == null) {
-            if (statusLabel != null) statusLabel.setText("Selected account could not be found.");
+        //Find account and check it
+        if(atm.findATMAccount(amount) != 0){
+            statusLabel.setText(String.format("Customer %s %s has no compatible account!\n",
+            cus.firstName, cus.lastName));
             return;
         }
 
-        if (account instanceof CDAccount cdAccount) {
-            double needed = amount;
-            if (cdAccount.maturityDate != null && LocalDate.now().isBefore(cdAccount.maturityDate)) {
-                needed += cdAccount.earlyPenalty;
-            }
-            if (needed > account.getBalance()) {
-                if (statusLabel != null) {
-                    statusLabel.setText("Insufficient funds. Balance: $" + String.format("%.2f", account.getBalance()));
-                }
-                return;
-            }
+        //Get balance amounts and perform withdraw
+        double previousBalance = atm.getAccount().getBalance();
+        int result = atm.ATMWithdraw(amount);
+        switch (result){
+            case 0: statusLabel.setText("Withdraw successful."); break;
+            case 1: statusLabel.setText("Customer has already made 2 withdraws!"); return;
+            case 2: statusLabel.setText("Customer does not have an account with sufficient balance!"); return;
+            default: return;
         }
-
-        // prevent over-withdrawing from savings
-        if (account instanceof SavingsAccount && amount > account.getBalance()) {
-            if (statusLabel != null) {
-                statusLabel.setText("Insufficient funds. Balance: $" + String.format("%.2f", account.getBalance()));
-            }
-            return;
-        }
-
-        double previousBalance = account.getBalance();
-
-        account.withdraw(amount);
-        if (account instanceof CheckingsAccount checking) {
-            checking.handleOverdraft();
-        }
-
-        double newBalance = account.getBalance();
+        double newBalance = atm.getAccount().getBalance();
 
         CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
@@ -190,31 +148,12 @@ public class ATMWithdrawController {
             newBalanceLabel.setText("New Balance: $" + String.format("%.2f", newBalance));
         }
 
-        if (statusLabel != null) {
-            statusLabel.setText("Withdrawal completed successfully.");
+        if (withdrawsLabel != null) {
+            withdrawsLabel.setText("Withdraws remaining: " + (2 -atm.getWithdraws()));
         }
 
         // refresh dropdown text so new balance shows
         onCustomerChosen(null);
-    }
-
-    // dropdown text
-    private String buildAccountDisplay(Account account) {
-        return getAccountType(account) + " - $" + String.format("%.2f", account.getBalance());
-    }
-
-    // account type label
-    private String getAccountType(Account account) {
-        if (account instanceof SavingsAccount) {
-            return "Savings";
-        } else if (account instanceof TMBAccount) {
-            return "TMB Checking";
-        } else if (account instanceof GDAccount) {
-            return "Gold/Diamond";
-        } else if (account instanceof CDAccount) {
-            return "CD";
-        }
-        return "Unknown";
     }
 
     @FXML

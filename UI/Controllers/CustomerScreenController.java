@@ -36,7 +36,7 @@ public class CustomerScreenController {
 
     @FXML
     private void goToATMWithdrawScreen(ActionEvent event) {
-        switchScreen(event, "/Customer/InputCheckScreen.fxml", "Input Check Screen");
+        switchScreen(event, "/Customer/ATMWithdraw.fxml", "Input Check Screen");
     }
 
     @FXML
