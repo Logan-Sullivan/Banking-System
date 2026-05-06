@@ -70,6 +70,10 @@ public class LoadBasicDataController {
                 if (line.isBlank()) {
                     continue;
                 }
+                // DATE row is valid timeline data, not a customer row
+                if (line.startsWith("DATE,")) {
+                    continue;
+                }
 
                 lines++;
 
