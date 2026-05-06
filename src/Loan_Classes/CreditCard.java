@@ -4,7 +4,7 @@ import Utils.Transaction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class CreditCard extends Loan {
     public double creditLimit;
@@ -13,15 +13,21 @@ public class CreditCard extends Loan {
     double financeCharge = 0.0;
 
     //I'm not going to put the starting balance as the principal, because the credit card balance is expected to flucuate as it is used
-    public CreditCard(double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit, LocalDate dateCreated) {
+    public CreditCard(double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit, LocalDate currentDate) {
         this.currentPaymentDue = currentPaymentDue;
         this.interest_rate = interest_rate;
         LoanStatus = loanStatus;
         this.isProblemAccount = isProblemAccount;
         this.creditLimit = creditLimit;
-        this.loanRepaymentDate = dateCreated.plusMonths(1).withDayOfMonth(10);
+        this.loanRepaymentDate = currentDate.plusMonths(1).withDayOfMonth(10);//This isn't actually used because credit cards have set dates that actions occur
         this.averageDue = currentPaymentDue;
-        this.dateSinceLastBalanceChange = dateCreated;
+        this.dateSinceLastBalanceChange = currentDate;
+    }
+
+    public void updateTime(LocalDate currentDate, int days){
+        generateBill(currentDate);
+        checkBillStatus(currentDate);
+
     }
 
     public CreditCard(String id, double currentPaymentDue, double interest_rate, String loanStatus, boolean isProblemAccount,double creditLimit, LocalDate dateCreated) {
@@ -57,7 +63,8 @@ public class CreditCard extends Loan {
                 averageDue += currentPaymentDue * (currentDay.toEpochDay()-dateSinceLastBalanceChange.toEpochDay()-1);
                 //Now for a bit of a monster of a line: this calculates the finance charge, which is the average amount of charge of the credit card for the month
                 //This line takes the total amounts over all of the days and divides it by the number of days of the previous month
-                financeCharge = averageDue/(LocalDate.of(currentDay.getYear(), currentDay.minusMonths(1).getMonth(), 1).getMonth().length(currentDay.isLeapYear()));
+                int numDaysInLastMonth = (LocalDate.of(currentDay.getYear(), currentDay.minusMonths(1).getMonth(), 1).getMonth().length(currentDay.isLeapYear()));
+                financeCharge = averageDue/numDaysInLastMonth;
             }else{
                 averageDue = 0.0;
             }
@@ -67,16 +74,17 @@ public class CreditCard extends Loan {
     }
 
     /**
-     * This function checks if the bill has not been paid by the 10th of this month. This funciton is primarily for testing/presentation
+     * This function checks if the bill has not been paid by the 10th of this month or later. This funciton is used for most of the system
+     * If so, it marks this card as a problem account
      * @param currentDate the current date
      */
     public void checkBillStatus(LocalDate currentDate){
-        if(currentDate.getDayOfMonth()>=10 && financeCharge > 0){
+        if(currentDate.getDayOfMonth()==10 && financeCharge > 0){
             isProblemAccount = true;
         }
     }
     /**
-     * This function checks if the bill has not been paid by the 10th of the month (Or later if someone forgets)
+     * This function checks if the bill has not been paid by the 10th of the month or later
      * If so, it marks this card as a problem account
      */
     public void checkBillStatus(){

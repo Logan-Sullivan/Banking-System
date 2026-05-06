@@ -1,6 +1,5 @@
 import Utils.AppState;
 import Utils.ArrayListManager;
-import Utils.CheckpointManager;
 import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,8 +17,8 @@ public class CheckPointController {
     @FXML
     private void beginCheckPoint(ActionEvent event) {
         try {
-            CheckpointManager checkpointManager = new CheckpointManager();
-            checkpointManager.EXEC_CHECKPOINT(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
+
             if (statusLabel != null) {
                 statusLabel.setText("Checkpoint completed successfully.");
             }
@@ -35,7 +34,7 @@ public class CheckPointController {
     private void restoreSavedState(ActionEvent event) {
         try {
             AppState.customers = new ArrayListManager<>();
-            CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers);
+            CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, AppState.timeline);
 
             if (statusLabel != null) {
                 statusLabel.setText("Saved state restored successfully.");
@@ -51,8 +50,7 @@ public class CheckPointController {
     @FXML
     private void shutDownSystem(ActionEvent event) {
         try {
-            CheckpointManager checkpointManager = new CheckpointManager();
-            checkpointManager.EXEC_CHECKPOINT(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();

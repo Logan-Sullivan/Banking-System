@@ -5,6 +5,7 @@ import Utils.Transaction;
 import java.time.LocalDate;
 import java.time.Period;
 
+
 /**
  * This class is for term based loans
  * These loans last for a set amount of time (unless the customer closes them early by paying the remaining principal) in years called terms
@@ -18,6 +19,8 @@ public abstract class TermBasedLoan extends Loan{
     int termMonthsLeft;
     double lateFee = 75.00;
     Period dueDateInterval;
+    boolean lateFeeApplied;
+    LocalDate dateCreated;
 
     /**
      * Generates the total repayment amount required for each monthly payment due date.
@@ -28,6 +31,7 @@ public abstract class TermBasedLoan extends Loan{
         //monthly payment formula is | Principle * interest *(1 + interest)^term / (1+interest)^term - 1
         double monthlyRate = ((interest_rate/12)/100);
         this.monthlyPayment = principal * (monthlyRate * Math.pow((1 + monthlyRate), (termMonthsLeft)))/((Math.pow(1+monthlyRate, (termMonthsLeft)))-1);
+        lateFeeApplied = false;
         // double interestPayment = monthlyRate * (principal+currentPaymentDue);
         // this.currentPaymentDue = monthlyPayment;
         // paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
@@ -45,6 +49,7 @@ public abstract class TermBasedLoan extends Loan{
         paymentDueDate = loanRepaymentDate.plus(dueDateInterval);
         loanRepaymentDate = loanRepaymentDate.plusMonths(1);
         this.principal = principal - (monthlyPayment - interestPayment);
+        lateFeeApplied = false;
         termMonthsLeft--;
     }
 
@@ -101,8 +106,9 @@ public abstract class TermBasedLoan extends Loan{
      * This function applies a late fee if the loan has not been paid by its due date
      */
     public void applyLateFee(){
-        if(LocalDate.now().compareTo(paymentDueDate)>0){
+        if(LocalDate.now().compareTo(paymentDueDate)>0 && !lateFeeApplied){
             this.currentPaymentDue = currentPaymentDue + lateFee;
+            lateFeeApplied = true;
         }
     }
     /**
@@ -111,8 +117,9 @@ public abstract class TermBasedLoan extends Loan{
      * @param currentDate The current date
      */
     public void applyLateFee(LocalDate currentDate){
-        if(currentDate.compareTo(paymentDueDate)>0){
+        if(currentDate.compareTo(paymentDueDate)==0 && !lateFeeApplied){
             this.currentPaymentDue = currentPaymentDue + lateFee;
+            lateFeeApplied = true;
         }
     }
     public double getCurrentPaymentDue(){return currentPaymentDue;}

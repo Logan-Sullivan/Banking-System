@@ -36,7 +36,6 @@
                     <String fx:value="Savings Account" />
                     <String fx:value="Gold Diamond Checking Account" />
                     <String fx:value="That's My Bank Checking Account" />
-                    <String fx:value="CD Account" />
                 </FXCollections>
             </items>
         </ComboBox>

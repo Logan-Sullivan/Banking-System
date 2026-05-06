@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import Account_Classes.*;
+
 public class CsvManager {
     //i think this best belongs in the manger class once thats made as i believe they will be the ones with permissions to close an account
     public static void removeCustFromArrBySSN(ArrayListManager<Customer> CustomerList, String SSN) {
@@ -29,12 +31,12 @@ public class CsvManager {
     }
 
     // CS: fetches the customer information then the account information from the CSV and loads it to create all accounts and customers.
-    public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList) {
-        fetchCustsAndAccountsFromCSV(CustomerList, "src/data.csv");
+    public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList, Timeline timeline) {
+        fetchCustsAndAccountsFromCSV(CustomerList, "src/data.csv", timeline);
     }
 
     // Same as fetchCustsAndAccountsFromCSV(CustomerList) but allows the UI to choose a file.
-    public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList, String path) {
+    public static void fetchCustsAndAccountsFromCSV(ArrayListManager<Customer> CustomerList, String path, Timeline timeline) {
         File file = new File(path);
 
         try (Scanner fileReader = new Scanner(file)) {
@@ -42,11 +44,19 @@ public class CsvManager {
             while (fileReader.hasNextLine()) {
                 String text = fileReader.nextLine().trim();
                 if (text.isEmpty()) continue;
+                if (text.startsWith("DATE,")){ // Checks the file for Date, parses it into timeline
+                    String dateString = text.split(",")[1];
+                    LocalDate savedDate = LocalDate.parse(dateString);
+                    timeline.setDate(savedDate);
+                    continue;
+                }
                 String[] formattedText = text.split(",", -1);
                 if (formattedText.length >= 7) {
                     customer = (new Customer(formattedText[0], formattedText[1], formattedText[2],
-                            formattedText[3], formattedText[4], formattedText[5], formattedText[6]));
+                            formattedText[3], formattedText[4], formattedText[5], formattedText[6], 
+                            Integer.parseInt(formattedText[7]))); //M.C. Integer represents ATM state
                     CustomerList.addInOrder(customer);
+                    AppState.timeline.addServices(customer.atm); //M.C. Add the atm card to the timeservices
                     continue;
                 }
                 if (customer == null) continue;
@@ -63,6 +73,8 @@ public class CsvManager {
 
                         SavingsAccount savings = new SavingsAccount(id, rate, freq, overdraft, balance);
                         customer.accountList.add(savings);
+                        // add savings account to timeline
+                        AppState.timeline.addServices(savings);
                     }
                     case "TMBAccount" -> {
                         String id = vars[1];
@@ -77,6 +89,8 @@ public class CsvManager {
                             }
                         }
                         customer.accountList.add(tmb);
+                        // add TMB account to timeline
+                        AppState.timeline.addServices(tmb);
                     }
                     case "GDAccount" -> {
                         String id = vars[1];
@@ -93,6 +107,8 @@ public class CsvManager {
                             }
                         }
                         customer.accountList.add(gd);
+                        // add GD account to timeline
+                        AppState.timeline.addServices(gd);
                     }
                     case "CDAccount" -> {
                         String id = vars[1];
@@ -101,8 +117,19 @@ public class CsvManager {
                         String date = vars[4];
                         double penalty = Double.parseDouble(vars[5]);
 
-                        CDAccount cd = new CDAccount(id, balance, rate, null, penalty);
+                        LocalDate maturityDate = null;
+                        if (date != null && !date.isBlank() && !date.equals("null")) {
+                            try {
+                                maturityDate = LocalDate.parse(date);
+                            } catch (Exception ignored) {
+                                maturityDate = null;
+                            }
+                        }
+
+                        CDAccount cd = new CDAccount(id, balance, rate, maturityDate, penalty);
                         customer.accountList.add(cd);
+                        // add CD account to timeline
+                        AppState.timeline.addServices(cd);
                     }
                     case "MortgageLoan" ->{
                         String id = vars[1];
@@ -111,6 +138,8 @@ public class CsvManager {
                         double principle = Double.parseDouble(vars[4]);
                         MortgageLoan mgl = new MortgageLoan(id, term, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
                         customer.payoffList.add(mgl);
+                        // add mortgage loan to timeline
+                        AppState.timeline.addServices(mgl);
                     }
                     case "ShortTermLoan" -> {
                         String id = vars[1];
@@ -119,6 +148,8 @@ public class CsvManager {
 
                         ShortTermLoan stl = new ShortTermLoan(id, rate, principle, java.time.Period.ofMonths(1), LocalDate.now());
                         customer.payoffList.add(stl);
+                        // add short term loan to timeline
+                        AppState.timeline.addServices(stl);
                     }
                     case "CreditCard" -> {
                         String id = vars[1];
@@ -126,9 +157,12 @@ public class CsvManager {
                         double rate = Double.parseDouble(vars[3]);
                         String status = vars[4];
                         boolean problem = Boolean.parseBoolean(vars[5]);
-                        double limit = 0;
+                        // reload credit card limit from CSV
+                        double limit = Double.parseDouble(vars[6]);
                         CreditCard card = new CreditCard(id, duePayment, rate, status, problem, limit, LocalDate.now());
                         customer.payoffList.add(card);
+                        // add credit card to timeline
+                        AppState.timeline.addServices(card);
                     }
                     case "Transaction" -> {
                         String cardId = vars[1];
@@ -148,22 +182,45 @@ public class CsvManager {
         catch (FileNotFoundException e) {
             System.out.println("File not found");
         }//end of try-catch 1
+        // Parses accounts into timeline and loans
+        for (int i = 0; i < CustomerList.getMcount(); i++) {
+            Customer customer = CustomerList.getValue(i);
+
+            for (Account account : customer.accountList) {
+                if (account instanceof TimeService time) {
+                    timeline.addServices(time);
+                }
+            }
+
+            for (Loan loan : customer.payoffList) {
+                if (loan instanceof TimeService time) {
+                    timeline.addServices(time);
+                }
+            }
+        }
+        // Checks previous date and now, so when it loads it automatically applies as needed
+        LocalDate today = LocalDate.now();
+        LocalDate lastDate = timeline.getLastUpdatedDate();
+        if(lastDate.isBefore(today)){
+            long days = java.time.temporal.ChronoUnit.DAYS.between(lastDate, today);
+            timeline.advanceTime((int) days);
+        }
     }
     //end of fetchCustsFromCSV
 
     // CS: I hate this.
-    public static void writeCustomersToCsv(ArrayListManager<Customer> CustomerList) {
+    public static void writeCustomersToCsv(ArrayListManager<Customer> CustomerList, Timeline timeline) {
         try {
             // CS: writes the updated accounts and otherwise into the CSV file
             FileWriter Writer = new FileWriter("src/data.csv"); // changed to use data.csv instead of customers.csv
-
+            Writer.write("DATE," + timeline.getLastUpdatedDate() + "\n");
             for (int i = 0; i < CustomerList.getMcount(); i++) {
                 Customer customer = CustomerList.getValue(i);
 
                 StringBuilder customerBuilder = new StringBuilder();
                 customerBuilder.append(customer.customerId).append(",").append(customer.address).append(",").append(customer.city)
                         .append(",").append(customer.state).append(",").append(customer.zipcode).append(",").append(customer.firstName)
-                        .append(",").append(customer.lastName).append("\n");
+                        .append(",").append(customer.lastName).append(customer.atm.getWithdraws()).append("\n");
 
                 for (Account account : customer.accountList){
 
@@ -223,6 +280,7 @@ public class CsvManager {
                                 .append(card.id).append("|")
                                 .append(card.getBalance()).append("|")
                                 .append(card.interest_rate).append("|")
+                                .append("Current").append("|")
                                 .append(card.getIsProblemAccount()).append("|")
                                 .append(card.creditLimit).append("\n");
                         for (Transaction transaction : card.transactions){

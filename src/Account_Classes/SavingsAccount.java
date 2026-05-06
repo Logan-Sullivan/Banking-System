@@ -1,10 +1,12 @@
 package Account_Classes;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class SavingsAccount extends Account{
     double intrestRate;
     String compoundFreq;
     boolean overdraftBackup;
+    int daysSinceInterest;
 
 
     //default constructor for testing
@@ -13,7 +15,22 @@ public class SavingsAccount extends Account{
         this.intrestRate = .01+(99.99-.01)*Math.random();
         this.compoundFreq = "31";
         this.overdraftBackup = true;
+        this.daysSinceInterest = 0;
         this.deposit((int)(Math.random()*1000));
+    }
+
+    /**
+     * This function applies the interest for the specified number of days that have passed
+     * @param currentTime the current time of the system
+     * @param daysPassed the time passed between the previous time and the current time
+     */
+    public void updateTime(LocalDate currentTime, int daysPassed){
+        int compoundDays = getCompoundDays();
+        daysSinceInterest++;
+        if (daysSinceInterest >= compoundDays) {
+            applyDailyInterest();
+            daysSinceInterest = 0;
+        }
     }
 
     /**
@@ -28,6 +45,7 @@ public class SavingsAccount extends Account{
         this.intrestRate = intrestRate;
         this.compoundFreq = compoundFreq;
         this.overdraftBackup = overdraftBackup;
+        this.daysSinceInterest = 0;
         this.deposit(balance);
     }
 
@@ -36,12 +54,45 @@ public class SavingsAccount extends Account{
         this.intrestRate = intrestRate;
         this.compoundFreq = compoundFreq;
         this.overdraftBackup = overdraftBackup;
+        this.daysSinceInterest = 0;
         this.deposit(balance);
+    }
+
+    private int getCompoundDays(){
+        if (compoundFreq == null) {
+            return 1;
+        }
+        String value = compoundFreq.trim();
+        if (value.isEmpty()) {
+            return 1;
+        }
+        String lower = value.toLowerCase();
+        if (lower.equals("daily")) {
+            return 1;
+        }
+        if (lower.equals("weekly")) {
+            return 7;
+        }
+        if (lower.equals("biweekly")) {
+            return 14;
+        }
+        if (lower.equals("monthly")) {
+            return 30;
+        }
+        try {
+            int days = Integer.parseInt(value);
+            if (days > 0) {
+                return days;
+            }
+        } catch (Exception e) {
+            return 1;
+        }
+        return 1;
     }
 
     public void applyDailyInterest(){
         System.out.println("Daily interest applied: " + this.getBalance());
-        this.deposit(this.getBalance()*intrestRate);
+        this.deposit(this.getBalance()*(intrestRate/100));
         System.out.print(" → "+ this.getBalance() +"\n");
     }
 

@@ -1,9 +1,3 @@
-import Account_Classes.Account;
-import Account_Classes.CheckingsAccount;
-import Account_Classes.CDAccount;
-import Account_Classes.GDAccount;
-import Account_Classes.SavingsAccount;
-import Account_Classes.TMBAccount;
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.CsvManager;
@@ -18,6 +12,13 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import Account_Classes.Account;
+import Account_Classes.CDAccount;
+import Account_Classes.CheckingsAccount;
+import Account_Classes.GDAccount;
+import Account_Classes.SavingsAccount;
+import Account_Classes.TMBAccount;
 
 public class LinkAccountsController {
 
@@ -164,7 +165,7 @@ public class LinkAccountsController {
 
             checking.setOverdraftProtAccount(savings);
 
-            CsvManager.writeCustomersToCsv(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
             if (statusLabel != null) {
                 statusLabel.setText("Overdraft backup linked successfully.");
