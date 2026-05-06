@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="540.0" prefWidth="426.0" spacing="18.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InputCheckScreenController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Create Check Screen" />
+
+    <VBox maxWidth="320.0" spacing="10.0">
+        <Label text="Customer Name" />
+        <ComboBox fx:id="customerIdComboBox" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select customer name" />
+
+        <Label text="Sending account" />
+        <ComboBox fx:id="accountComboBox"
+                  promptText="Select account"
+                  prefWidth="280.0" />
+        <Label text="Check Amount" />
+        <TextField fx:id="checkAmountField" prefWidth="280.0" promptText="Enter check amount" />
+      <Label layoutX="10.0" layoutY="10.0" text="Receivers name" />
+      <ComboBox fx:id="customerIdComboBox2" layoutX="10.0" layoutY="37.0" prefWidth="280.0" promptText="Select customer name" />
+    </VBox>
+     <Button prefWidth="180.0" text="Create Check" onAction="#CreateCheck"/>
+
+    <VBox alignment="CENTER" spacing="12.0">
+        <Button onAction="#returnToCustomerScreen" prefWidth="180.0" text="Return to Customer Screen" />
+    </VBox>
+
+    <Label style="-fx-font-size: 12px;" text="After submitting, return to the Customer Screen." />
+</VBox>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="540.0" prefWidth="694.0" spacing="18.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ManageChecksScreen">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Manage Checks" />
+
+    <VBox maxWidth="320.0" spacing="10.0">
+        <Label text="Customer Name" />
+        <ComboBox fx:id="customerIdComboBox" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select customer name" />
+      <Label layoutX="10.0" layoutY="10.0" text="Check to modify" />
+      <ComboBox fx:id="CheckSelectorBox" layoutX="10.0" layoutY="37.0" onAction="#onCheckSelection" prefWidth="280.0" promptText="Select Check" />
+      <Label layoutX="10.0" layoutY="72.0" text="Management option" />
+      <ComboBox fx:id="customerIdComboBox11" layoutX="10.0" layoutY="99.0" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select the modification you want to apply" />
+    </VBox>
+
+    <VBox alignment="CENTER" spacing="12.0" />
+
+    <Label style="-fx-font-size: 12px;" />
+   <Label layoutX="191.0" layoutY="265.0" text="Sent Checks                                                                           Recieved Checks" textAlignment="CENTER" />
+   <SplitPane dividerPositions="0.5" prefHeight="143.0" prefWidth="634.0">
+      <items>
+         <TableView prefHeight="200.0" prefWidth="200.0">
+           <columns>
+             <TableColumn prefWidth="139.0" text="Recipient" />
+             <TableColumn prefWidth="106.0" text="Amount" />
+               <TableColumn prefWidth="68.0" text="Status" />
+           </columns>
+         </TableView>
+         <TableView layoutX="10.0" layoutY="10.0" prefHeight="142.0" prefWidth="313.0">
+            <columns>
+               <TableColumn prefWidth="139.0" text="Sender" />
+               <TableColumn prefWidth="106.0" text="Amount" />
+               <TableColumn prefWidth="68.0" text="Status" />
+            </columns>
+         </TableView>
+      </items></SplitPane>
+     <Button onAction="#returnToCustomerScreen" prefWidth="180.0" text="Return to Customer Screen" />
+</VBox>

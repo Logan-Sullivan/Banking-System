@@ -1,7 +1,13 @@
 package Utils;
 
+import Account_Classes.Account;
 import User_Classes.Customer;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Minimal shared in-memory state for the JavaFX UI.
@@ -15,7 +21,9 @@ public final class AppState {
     public static HashMap<String, String> accountEffectiveDates = new HashMap<>();
     public static Timeline timeline = new Timeline();
 
-    public static ArrayListManager<Check> checks = new ArrayListManager<>();
+    public static List<Check> checks = new ArrayList<>();
+
+
     private AppState() {
     }
 }

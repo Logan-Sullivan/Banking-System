@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 import Account_Classes.*;
 
@@ -53,7 +51,7 @@ public class CsvManager {
                 String[] formattedText = text.split(",", -1);
                 if (formattedText.length >= 7) {
                     customer = (new Customer(formattedText[0], formattedText[1], formattedText[2],
-                            formattedText[3], formattedText[4], formattedText[5], formattedText[6], 
+                            formattedText[3], formattedText[4], formattedText[5], formattedText[6],
                             Integer.parseInt(formattedText[7]))); //M.C. Integer represents ATM state
                     CustomerList.addInOrder(customer);
                     AppState.timeline.addServices(customer.atm); //M.C. Add the atm card to the timeservices
@@ -220,10 +218,9 @@ public class CsvManager {
                 StringBuilder customerBuilder = new StringBuilder();
                 customerBuilder.append(customer.customerId).append(",").append(customer.address).append(",").append(customer.city)
                         .append(",").append(customer.state).append(",").append(customer.zipcode).append(",").append(customer.firstName)
-                        .append(",").append(customer.lastName).append(customer.atm.getWithdraws()).append("\n");
+                        .append(",").append(customer.lastName).append(",").append(customer.atm.getWithdraws()).append("\n");
 
                 for (Account account : customer.accountList){
-
                     if (account instanceof SavingsAccount saving){
                         // Ike: write full savings data so reload matches the parser format
                         customerBuilder.append(saving.getClass().getSimpleName()).append("|")
@@ -303,32 +300,47 @@ public class CsvManager {
         }//end of try-catch
     }//end of writeCustomersToCsv
 
-    public static void fetchChecksFromCSV(ArrayListManager<Check> Checklist, String fileName){
-        String ID,senderID,receiverID,amount,status;
-
-        File file = new File(fileName);
-        try (Scanner fileReader = new Scanner(file)){
-            while (fileReader.hasNextLine()){
+    public static void fetchChecksFromCSV(List<Check> Checklist,ArrayListManager<Customer> CustomerList){
+        String ID,SenderID,receiverName,status;
+        Double amount;
+        HashMap<String,int[]> accountIndexs = new HashMap<>();
+        HashMap<String,Integer> CustomerIndexs = new HashMap<>();
+        //for each customer
+        for (int i = 0; i < CustomerList.getMcount(); i++) {
+            CustomerIndexs.put(CustomerList.getValue(i).firstName +" "+CustomerList.getValue(i).lastName,i);
+            //for each customer's owned accounts
+            for (int j = 0; j < CustomerList.getValue(i).accountList.size(); j++) {
+                accountIndexs.put(CustomerList.getValue(i).accountList.get(j).accountNumber, new int[]{i, j});
+            }
+        }
+        try (Scanner fileReader = new Scanner("src/checks.csv")){
+            while (fileReader.hasNextLine()) {
                 String text = fileReader.nextLine();
+
                 String[] formattedText = text.split(",");
-                ID = formattedText[0];
-                senderID = formattedText[1];
-                receiverID = formattedText[2];
-                amount = formattedText[3];
-                status = formattedText[4];
-                Checklist.addInOrder(new Check(Integer.parseInt(ID),senderID,receiverID,Double.parseDouble(amount),status));
+                if (formattedText.length == 4){
+                    SenderID = formattedText[0];
+                    receiverName = formattedText[1] + " " + formattedText[2];
+                    amount = Double.parseDouble(formattedText[3]);
+                    status = formattedText[4];
+
+                    if (accountIndexs.containsKey(SenderID) && CustomerIndexs.containsKey(receiverName)) {
+                        Checklist.add(new Check(amount, (CustomerList.getValue(accountIndexs.get(SenderID)[0]).accountList.get(accountIndexs.get(SenderID)[1])), CustomerList.getValue(CustomerIndexs.get(receiverName)), status));
+                    }
+                }
+
+
+                //Checklist.addInOrder(new Check(Integer.parseInt(ID),senderID,receiverID,Double.parseDouble(amount),status));
 
             }
-        } catch (FileNotFoundException e){
-            System.out.println("File not found");
         }
     }
 
-    public static void writeChecksToCSV(ArrayListManager<Check> Checklist,String fileName){
+    public static void writeChecksToCSV(List<Check> Checklist){
         try{
-            FileWriter Writer = new FileWriter(fileName);
-            for (int i = 0; i < Checklist.getMcount(); i++) {
-                Writer.write(Checklist.getValue(i).CheckCSVString());
+            FileWriter Writer = new FileWriter("src/checks.csv");
+            for (int i = 0; i < Checklist.size(); i++) {
+                Writer.write(Checklist.get(i).CheckCSVString());
             }
                 Writer.close();
         } catch (IOException e) {
