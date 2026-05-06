@@ -157,12 +157,12 @@ public class ATMWithdrawController {
     }
 
     @FXML
-    private void returnToTellerScreen(ActionEvent event) {
+    private void returnToCustomerScreen(ActionEvent event) {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/TellerScreen.fxml")));
+            Scene scene = new Scene(FXMLLoader.load(getClass().getResource("/CustomerScreen.fxml")));
             stage.setScene(scene);
-            stage.setTitle("Teller Screen");
+            stage.setTitle("Customer Screen");
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

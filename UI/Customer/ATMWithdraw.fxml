@@ -16,7 +16,7 @@
         <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
     </padding>
 
-    <Label text="Withdraw from Account" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
+    <Label text="ATM Withdraw" style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
     <VBox spacing="10.0" maxWidth="320.0">
         <Label text="Customer Name" />
@@ -41,9 +41,9 @@
         <Button text="Withdraw"
                 prefWidth="180.0"
                 onAction="#withdrawPressed" />
-        <Button text="Return to Teller Screen"
+        <Button text="Return to Customer Screen"
                 prefWidth="180.0"
-                onAction="#returnToTellerScreen" />
+                onAction="#returnToCustomerScreen" />
     </VBox>
 
     <Label fx:id="statusLabel" text="Ready." style="-fx-font-size: 12px;" />
