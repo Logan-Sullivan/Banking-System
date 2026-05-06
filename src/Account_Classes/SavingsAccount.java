@@ -28,7 +28,7 @@ public class SavingsAccount extends Account{
         int compoundDays = getCompoundDays();
         daysSinceInterest++;
         if (daysSinceInterest >= compoundDays) {
-            applyDailyInterest();
+            applyInterestForPeriod(currentTime, compoundDays);
             daysSinceInterest = 0;
         }
     }
@@ -92,8 +92,24 @@ public class SavingsAccount extends Account{
 
     public void applyDailyInterest(){
         System.out.println("Daily interest applied: " + this.getBalance());
-        this.deposit(this.getBalance()*(intrestRate/100));
+        applyInterestForPeriod(LocalDate.now(), 1);
         System.out.print(" → "+ this.getBalance() +"\n");
+    }
+
+    private void applyInterestForPeriod(LocalDate currentTime, int periodDays){
+        if (periodDays <= 0) {
+            return;
+        }
+        int daysInYear = 365;
+        if (currentTime != null && currentTime.isLeapYear()) {
+            daysInYear = 366;
+        }
+        double annualRate = intrestRate / 100.0;
+        double periodRate = annualRate * ((double) periodDays / daysInYear);
+        if (periodRate <= 0) {
+            return;
+        }
+        this.deposit(this.getBalance() * periodRate);
     }
 
     public void toggleOverdraftBackup(){
