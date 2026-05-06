@@ -1,39 +1,38 @@
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
 import Account_Classes.Account;
 import Account_Classes.CDAccount;
+import Account_Classes.CheckingsAccount;
 import Account_Classes.GDAccount;
 import Account_Classes.SavingsAccount;
 import Account_Classes.TMBAccount;
-import Account_Classes.CheckingsAccount;
 import User_Classes.Customer;
 import Utils.AppState;
 import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-
-public class WithdrawFromAccountController {
-
+public class ATMWithdrawController {
+    
     @FXML
     private ComboBox<String> customerIdComboBox;
-
-    @FXML
-    private ComboBox<String> accountComboBox;
 
     @FXML
     private TextField withdrawAmountField;
 
     @FXML
     private Label statusLabel;
+
+    @FXML
+    private Label withdrawsLabel;
+
     @FXML
     private Label previousBalanceLabel;
 

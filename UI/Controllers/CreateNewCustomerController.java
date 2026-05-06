@@ -74,7 +74,7 @@ public class CreateNewCustomerController {
             File f = new File("src/data.csv");
             if (f.exists() && f.isFile()) {
                 AppState.customers = new Utils.ArrayListManager<>();
-                CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, "src/data.csv");
+                CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, "src/data.csv", AppState.timeline);
             }
         }
 
@@ -86,11 +86,11 @@ public class CreateNewCustomerController {
             }
         }
 
-        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName);
+        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName, 2);
         AppState.customers.addInOrder(customer);
 
         //  save customers/accounts/loans with CsvManager
-        CsvManager.writeCustomersToCsv(AppState.customers);
+        CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
         if (statusLabel != null) statusLabel.setText("Created customer " + firstName + " " + lastName + " (" + customerId + ")");
     }

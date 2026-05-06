@@ -143,7 +143,7 @@ public class CreateNewLoanController {
             selectedCustomer.payoffList.add(loan);
 
             // save loan data to CSV
-            CsvManager.writeCustomersToCsv(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
             statusLabel.setText("Mortgage loan created and saved.");
             return;
@@ -157,7 +157,7 @@ public class CreateNewLoanController {
             selectedCustomer.payoffList.add(loan);
 
             // save loan data to CSV
-            CsvManager.writeCustomersToCsv(AppState.customers);
+            CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
 
             statusLabel.setText("Short term loan created and saved.");
             return;

@@ -40,7 +40,7 @@ public class LoadBasicDataController {
 
         // Reset in-memory state, then load from CSV.
         AppState.customers = new ArrayListManager<>();
-        CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, path);
+        CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, path, AppState.timeline);
 
         if (statusLabel != null) {
             statusLabel.setText("Loaded " + AppState.customers.getMcount() + " customers from " + path);

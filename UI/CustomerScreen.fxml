@@ -20,6 +20,7 @@
         <Button text="Credit Card Screen" prefWidth="280.0" onAction="#goToCreditCardScreen" />
         <Button text="Review Account Status Screen" prefWidth="280.0" onAction="#goToReviewAccountStatusScreen" />
         <Button text="Input Check Screen" prefWidth="280.0" onAction="#goToInputCheckScreen" />
+        <Button text="Make ATM Withdraw" prefWidth="280.0" onAction="#goToATMWithdrawScreen" />
     </VBox>
 
     <Button text="Return to System Controller" prefWidth="220.0" onAction="#returnToSystemController" />
