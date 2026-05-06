@@ -86,7 +86,8 @@ public class CreateNewCustomerController {
             }
         }
 
-        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName, 2);
+        // new customers start with 0 ATM withdrawals
+        Customer customer = new Customer(customerId, address, city, state, zipcode, firstName, lastName, 0);
         AppState.customers.addInOrder(customer);
 
         //  save customers/accounts/loans with CsvManager

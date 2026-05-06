@@ -34,6 +34,9 @@ public class CheckPointController {
     private void restoreSavedState(ActionEvent event) {
         try {
             AppState.customers = new ArrayListManager<>();
+            // reset timeline before loading checkpoint data
+            AppState.timeline = new Utils.Timeline();
+
             CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, AppState.timeline);
 
             if (statusLabel != null) {
