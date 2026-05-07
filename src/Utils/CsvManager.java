@@ -200,6 +200,8 @@ public class CsvManager {
                 }
             }
         }
+        // convert checking account types after loading data
+        updateCheckingAccountTypes(CustomerList, timeline);
         // Checks previous date and now, so when it loads it automatically applies as needed
         LocalDate today = LocalDate.now();
         LocalDate lastDate = timeline.getLastUpdatedDate();
@@ -209,10 +211,56 @@ public class CsvManager {
         }
     }
     //end of fetchCustsFromCSV
+    // converts TMB/GD accounts on 5000 balance rule
+    public static void updateCheckingAccountTypes(ArrayListManager<Customer> CustomerList, Timeline timeline) {
+        if (CustomerList == null) {
+            return;
+        }
 
+        for (int i = 0; i < CustomerList.getMcount(); i++) {
+            Customer customer = CustomerList.getValue(i);
+
+            if (customer == null || customer.accountList == null) {
+                continue;
+            }
+
+            for (int j = 0; j < customer.accountList.size(); j++) {
+                Account account = customer.accountList.get(j);
+
+                if (account instanceof GDAccount gd && gd.getBalance() < 5000.0) {
+                    TMBAccount tmb = new TMBAccount(gd.accountNumber, null, gd.getBalance());
+
+                    if (gd.getOverdraftProtAccount() != null) {
+                        tmb.setOverdraftProtAccount(gd.getOverdraftProtAccount());
+                    }
+
+                    customer.accountList.set(j, tmb);
+
+                    if (timeline != null) {
+                        timeline.addServices(tmb);
+                    }
+                }
+
+                else if (account instanceof TMBAccount tmb && tmb.getBalance() > 5000.0) {
+                    GDAccount gd = new GDAccount(tmb.accountNumber, null, tmb.getBalance(), true);
+
+                    if (tmb.getOverdraftProtAccount() != null) {
+                        gd.setInterestAccount(tmb.getOverdraftProtAccount());
+                    }
+
+                    customer.accountList.set(j, gd);
+
+                    if (timeline != null) {
+                        timeline.addServices(gd);
+                    }
+                }
+            }
+        }
+    }
     // CS: I hate this.
     public static void writeCustomersToCsv(ArrayListManager<Customer> CustomerList, Timeline timeline) {
         try {
+
             // CS: writes the updated accounts and otherwise into the CSV file
             FileWriter Writer = new FileWriter("src/data.csv"); // changed to use data.csv instead of customers.csv
             Writer.write("DATE," + timeline.getLastUpdatedDate() + "\n");
