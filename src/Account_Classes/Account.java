@@ -29,6 +29,9 @@ public abstract class Account extends TimeService{
             System.out.print(" → " + this.balance + "\n");
         }
     }
+    public double closeAccount(){
+        return balance;
+    }
     public double getBalance(){
         return this.balance;
     }

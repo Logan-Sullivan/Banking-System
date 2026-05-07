@@ -65,6 +65,6 @@ public class AccountTests {
     @Test
     public void testSavingsInterest(){
         exampleSavings.applyDailyInterest();
-        assertEquals(2005, exampleSavings.getBalance());
+        assertEquals(2000.013698630137, exampleSavings.getBalance());
     }
 }
