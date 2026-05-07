@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Customer implements Comparable {
     public String customerId,address,city,state,zipcode,firstName,lastName;
-    public List<Account> accountList = new ArrayList<>();
-    public List<Loan> payoffList = new ArrayList<>();
+    public ArrayList<Account> accountList = new ArrayList<>();
+    public ArrayList<Loan> payoffList = new ArrayList<>();
     public ATMCard atm;
 
     public Customer(){
@@ -40,5 +40,33 @@ public class Customer implements Comparable {
     @Override
     public int compareTo(Object o){
         return this.lastName.compareTo(((Customer)o).lastName);
+    }
+    public double closeCustomer(){
+        double totalSum=0.0;
+        for(int i=0; i<accountList.size();i++){
+            totalSum += accountList.get(i).closeAccount();
+        }
+        for(int i=0; i<accountList.size();i++){
+            accountList.remove(i);
+        }
+        for(int i=0; i<payoffList.size();i++){
+            totalSum-=payoffList.get(i).closeAccount();
+        }
+        for(int i=0; i<payoffList.size();i++){
+            payoffList.remove(i);
+        }
+        return totalSum;
+    }
+    public double closeOneAccount(int accountIndex){
+        double amountDue = 0.0;
+        amountDue = accountList.get(accountIndex).closeAccount();
+        accountList.remove(accountIndex);
+        return amountDue;
+    }
+    public double closeOneLoan(int loanIndex){
+        double amountDue = 0.0;
+        amountDue -= payoffList.get(loanIndex).closeAccount();
+        payoffList.remove(loanIndex);
+        return amountDue;
     }
 }

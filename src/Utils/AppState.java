@@ -17,4 +17,10 @@ public final class AppState {
 
     private AppState() {
     }
+    public double closeCustomerAccount(int customerIndex){
+        double amount = 0.0;
+        amount = customers.getValue(customerIndex).closeCustomer();
+        customers.removeM(customerIndex);
+        return amount;
+    }
 }
