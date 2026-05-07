@@ -19,10 +19,10 @@ public class TimelineIntegrationTests {
     @Test
     public void testIncrementingInterest(){
         Timeline test = new Timeline(LocalDate.of(2026, 4, 30));
-        SavingsAccount testAccount = new SavingsAccount(5.0, "30", false, 100);
+        SavingsAccount testAccount = new SavingsAccount(5.0, "30", false, 1000);
         test.addServices(testAccount);
-        test.advanceTime(1);
-        Double expectedValue = 105.0;
+        test.advanceTime(30);
+        Double expectedValue = 1004.1095890410959;
         assertEquals(expectedValue, (Double)testAccount.getBalance());
     }
     //This test checks that loans increment correctly for the payments

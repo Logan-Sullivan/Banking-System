@@ -33,4 +33,14 @@ public class MainTests {
     public void testCreateExampleAccounts(){
         
     }
+    @Test
+    public void testClosingAccount(){
+        ArrayList<Customer>custList = new ArrayList<Customer>();
+        custList.add(new Customer());
+        custList.get(0).accountList.add(new SavingsAccount(5, "30", false, 1000));
+        Double expected = 1000.0;
+        Double gotten = custList.get(0).closeOneAccount(0);
+        
+        assertEquals(expected, gotten);
+    }
 }

@@ -65,4 +65,10 @@ public class Customer implements Comparable {
         accountList.remove(accountIndex);
         return amountDue;
     }
+    public double closeOneLoan(int loanIndex){
+        double amountDue = 0.0;
+        amountDue -= payoffList.get(loanIndex).closeAccount();
+        payoffList.remove(loanIndex);
+        return amountDue;
+    }
 }
