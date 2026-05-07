@@ -118,4 +118,19 @@ public class Check {
         return this.sender.accountNumber+","+this.receiver.firstName+","+this.receiver.lastName+","+this.amount+","+this.Status+"\n";
     }
 
+    public double getAmount() {
+        return amount;
+    }
+
+    public Customer getReceiver() {
+        return receiver;
+    }
+
+    public Account getSender() {
+        return sender;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
 }

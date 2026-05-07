@@ -49,6 +49,7 @@ public class LoadBasicDataController {
         if (statusLabel != null) {
             statusLabel.setText("Loaded " + AppState.customers.getMcount() + " customers from " + path);
         }
+        System.out.println("Loaded "+AppState.checks.size()+ " checks");
     }
 
     @FXML

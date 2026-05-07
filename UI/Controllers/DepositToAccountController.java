@@ -5,10 +5,12 @@ import Account_Classes.SavingsAccount;
 import Account_Classes.TMBAccount;
 import User_Classes.Customer;
 import Utils.AppState;
+import Utils.Check;
 import Utils.CsvManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -16,10 +18,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DepositToAccountController {
+
+    @FXML
+    public ComboBox<String> depositTypeBox;
+    public Label checkChoiceLabel;
+    public ComboBox<String> chooseCheck;
+    public Group checkGroup;
+    public Group cashGroup;
+    private final List<Account> myAccounts = new ArrayList<>();
+    private final Map<String, Check> checkMap = new HashMap<>();
 
     @FXML
     private ComboBox<String> customerIdComboBox;
@@ -49,6 +59,10 @@ public class DepositToAccountController {
 
     @FXML
     public void initialize() {
+        checkGroup.setVisible(false);
+        cashGroup.setVisible(false);
+        depositTypeBox.getItems().add("Cash");
+        depositTypeBox.getItems().add("Check");
         if (customerIdComboBox != null) {
             customerIdComboBox.getItems().clear();
             customerMap.clear();
@@ -71,8 +85,10 @@ public class DepositToAccountController {
     @FXML
     private void onCustomerChosen(ActionEvent event) {
         String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
-
+        checkGroup.setVisible(false);
+        cashGroup.setVisible(false);
         accountMap.clear();
+        myAccounts.clear();
 
         if (accountComboBox != null) {
             accountComboBox.getItems().clear();
@@ -105,8 +121,33 @@ public class DepositToAccountController {
             }
         }
 
+        //get customers checks
+        if (AppState.checks != null) {
+            for (int i = 0; i < AppState.checks.size(); i++) {
+                Check c = AppState.checks.get(i);
+                //check for received checks
+                if (c.getReceiver() == customer){
+                    String text = buildCheckDisplay(c,"From: "+ Objects.requireNonNull(ManageChecksScreen.getCustFromAccount(c.getSender())).lastName);
+                    checkMap.put(text,c);
+                    chooseCheck.getItems().add(text);
+                }
+            }
+        }
+
         if (statusLabel != null) {
             statusLabel.setText("Customer accounts loaded.");
+        }
+    }
+
+    @FXML
+    public void onChooseDepositType(ActionEvent actionEvent) {
+        checkGroup.setVisible(false);
+        cashGroup.setVisible(false);
+
+        if (depositTypeBox.getValue().equals("Check")){
+            checkGroup.setVisible(true);
+        } else if(depositTypeBox.getValue().equals("Cash")){
+            cashGroup.setVisible(true);
         }
     }
 
@@ -115,6 +156,12 @@ public class DepositToAccountController {
         String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
         String accountSelection = accountComboBox == null ? "" : accountComboBox.getValue();
         String amountText = depositAmountField == null ? "" : depositAmountField.getText();
+        String depositType = depositTypeBox == null ? "" : depositTypeBox.getValue();
+
+        if (depositType == null || depositType.isBlank()) {
+            if (statusLabel != null) statusLabel.setText("Please select a deposit type.");
+            return;
+        }
 
         if (selectedCustomerName == null || selectedCustomerName.isBlank()) {
             if (statusLabel != null) statusLabel.setText("Please select a customer.");
@@ -126,19 +173,6 @@ public class DepositToAccountController {
             return;
         }
 
-        double amount;
-        try {
-            amount = Double.parseDouble(amountText);
-        } catch (Exception e) {
-            if (statusLabel != null) statusLabel.setText("Please enter a valid deposit amount.");
-            return;
-        }
-
-        if (amount <= 0) {
-            if (statusLabel != null) statusLabel.setText("Deposit amount must be greater than zero.");
-            return;
-        }
-
         Account account = accountMap.get(accountSelection);
         if (account == null) {
             if (statusLabel != null) statusLabel.setText("Selected account could not be found.");
@@ -147,7 +181,31 @@ public class DepositToAccountController {
 
         double previousBalance = account.getBalance();
 
-        account.deposit(amount);
+        if (depositType.equals("Cash")){
+            double amount;
+
+            try {
+                amount = Double.parseDouble(amountText);
+            } catch (Exception e) {
+                if (statusLabel != null) statusLabel.setText("Please enter a valid deposit amount.");
+                return;
+            }
+
+            if (amount <= 0) {
+                if (statusLabel != null) statusLabel.setText("Deposit amount must be greater than zero.");
+                return;
+            }
+
+            account.deposit(amount);
+        } else if(depositType.equals("Check")){
+            String checkchoice = chooseCheck ==null ? "" : chooseCheck.getValue();
+
+            if (chooseCheck == null || chooseCheck.isBlank()) {
+                if (statusLabel != null) statusLabel.setText("Please select a customer.");
+                return;
+            }
+        }
+
 
         double newBalance = account.getBalance();
 
@@ -173,7 +231,13 @@ public class DepositToAccountController {
         // refresh account display so balance updates in dropdown
         onCustomerChosen(null);
     }
+    public void onChooseCheck(ActionEvent actionEvent) {
+        //validate check
+    }
 
+    private String buildCheckDisplay(Check check, String prefix) {
+        return prefix + " - $" + String.format("%.2f", check.getAmount());
+    }
     // account text for dropdown display
     private String buildAccountDisplay(Account account) {
         return getAccountType(account) + " - $" + String.format("%.2f", account.getBalance());
@@ -205,4 +269,7 @@ public class DepositToAccountController {
             e.printStackTrace();
         }
     }
+
+
+
 }

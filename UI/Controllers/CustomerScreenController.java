@@ -30,15 +30,17 @@ public class CustomerScreenController {
     }
 
     @FXML
-    private void goToInputCheckScreen(ActionEvent event) {
+    private void goToATMWithdrawScreen(ActionEvent event) {
         switchScreen(event, "/Customer/ATMWithdraw.fxml", "ATM Withdraw Screen");
     }
-
     @FXML
-    private void goToATMWithdrawScreen(ActionEvent event) {
-        switchScreen(event, "/Customer/InputCheckScreen.fxml", "Input Check Screen");
+    private void goToManageCheckScreen(ActionEvent event) {
+        switchScreen(event, "/Customer/ManageChecks.fxml", "Manage Checks Screen");
     }
-
+    @FXML
+    private void goToInputCheckScreen(ActionEvent event) {
+        switchScreen(event, "/Customer/CreateCheckScreen.fxml", "Create Check Screen");
+    }
     @FXML
     private void returnToSystemController(ActionEvent event) {
         switchScreen(event, "/SystemController.fxml", "System Controller");

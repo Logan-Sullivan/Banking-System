@@ -303,37 +303,46 @@ public class CsvManager {
     public static void fetchChecksFromCSV(List<Check> Checklist,ArrayListManager<Customer> CustomerList){
         String ID,SenderID,receiverName,status;
         Double amount;
-        HashMap<String,int[]> accountIndexs = new HashMap<>();
-        HashMap<String,Integer> CustomerIndexs = new HashMap<>();
+        Customer cust;
+        Account acc;
+        HashMap<String,Account> accountMap = new HashMap<>();
+        HashMap<String,Customer> CustomerMap = new HashMap<>();
         //for each customer
         for (int i = 0; i < CustomerList.getMcount(); i++) {
-            CustomerIndexs.put(CustomerList.getValue(i).firstName +" "+CustomerList.getValue(i).lastName,i);
+            cust = CustomerList.getValue(i);
+            CustomerMap.put(cust.firstName +" "+cust.lastName,cust);
             //for each customer's owned accounts
             for (int j = 0; j < CustomerList.getValue(i).accountList.size(); j++) {
-                accountIndexs.put(CustomerList.getValue(i).accountList.get(j).accountNumber, new int[]{i, j});
+                acc = CustomerList.getValue(i).accountList.get(j);
+                accountMap.put(acc.accountNumber, acc);
             }
         }
-        try (Scanner fileReader = new Scanner("src/checks.csv")){
+        File file = new File("src/checks.csv");
+        try (Scanner fileReader = new Scanner(file)){
             while (fileReader.hasNextLine()) {
                 String text = fileReader.nextLine();
 
                 String[] formattedText = text.split(",");
-                if (formattedText.length == 4){
+                if (formattedText.length ==5) {
                     SenderID = formattedText[0];
                     receiverName = formattedText[1] + " " + formattedText[2];
                     amount = Double.parseDouble(formattedText[3]);
                     status = formattedText[4];
 
-                    if (accountIndexs.containsKey(SenderID) && CustomerIndexs.containsKey(receiverName)) {
-                        Checklist.add(new Check(amount, (CustomerList.getValue(accountIndexs.get(SenderID)[0]).accountList.get(accountIndexs.get(SenderID)[1])), CustomerList.getValue(CustomerIndexs.get(receiverName)), status));
-                    }
+                    Checklist.add(new Check(
+                            amount,
+                            (accountMap.get(SenderID)),
+                            CustomerMap.get(receiverName),
+                            status)
+                    );
                 }
 
 
-                //Checklist.addInOrder(new Check(Integer.parseInt(ID),senderID,receiverID,Double.parseDouble(amount),status));
-
             }
-        }
+        }catch (FileNotFoundException e) {
+                System.out.println("File not found");
+                e.printStackTrace();
+            }
     }
 
     public static void writeChecksToCSV(List<Check> Checklist){

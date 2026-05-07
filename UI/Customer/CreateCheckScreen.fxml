@@ -14,7 +14,6 @@
     <VBox maxWidth="320.0" spacing="10.0">
         <Label text="Customer Name" />
         <ComboBox fx:id="customerIdComboBox" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select customer name" />
-
         <Label text="Sending account" />
         <ComboBox fx:id="accountComboBox"
                   promptText="Select account"

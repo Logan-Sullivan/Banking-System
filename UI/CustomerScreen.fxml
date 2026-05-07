@@ -14,9 +14,9 @@
     <VBox maxWidth="320.0" spacing="12.0">
         <Button onAction="#goToCreditCardScreen" prefWidth="280.0" text="Credit Card Screen" />
         <Button onAction="#goToReviewAccountStatusScreen" prefWidth="280.0" text="Review Account Status Screen" />
-      <Button layoutX="10.0" layoutY="84.0" onAction="#goToATMWithdrawScreen" prefWidth="280.0" text="Manage Checks Screen" />
-        <Button onAction="#goToATMWithdrawScreen" prefWidth="280.0" text="Create Check Screen" />
-        <Button onAction="#goToInputCheckScreen" prefWidth="280.0" text="Make ATM Withdraw" />
+        <Button onAction="#goToManageCheckScreen" prefWidth="280.0" text="Manage Checks Screen" />
+        <Button onAction="#goToInputCheckScreen" prefWidth="280.0" text="Create Check Screen" />
+        <Button onAction="#goToATMWithdrawScreen" prefWidth="280.0" text="Make ATM Withdraw" />
     </VBox>
 
     <Button onAction="#returnToSystemController" prefWidth="220.0" text="Return to System Controller" />
