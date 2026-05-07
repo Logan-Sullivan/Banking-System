@@ -81,12 +81,18 @@ public class DepositToAccountController {
             }
         }
     }
+    private static void getCustomerChecks(){
 
+    }
     @FXML
     private void onCustomerChosen(ActionEvent event) {
         String selectedCustomerName = customerIdComboBox == null ? "" : customerIdComboBox.getValue();
         checkGroup.setVisible(false);
         cashGroup.setVisible(false);
+        chooseCheck.getItems().clear();
+        depositTypeBox.getItems().clear();
+        depositTypeBox.getItems().add("Cash");
+        depositTypeBox.getItems().add("Check");
         accountMap.clear();
         myAccounts.clear();
 
@@ -126,7 +132,7 @@ public class DepositToAccountController {
             for (int i = 0; i < AppState.checks.size(); i++) {
                 Check c = AppState.checks.get(i);
                 //check for received checks
-                if (c.getReceiver() == customer){
+                if (c.getReceiver() == customer && c.getStatus().equals("Pending")){
                     String text = buildCheckDisplay(c,"From: "+ Objects.requireNonNull(ManageChecksScreen.getCustFromAccount(c.getSender())).lastName);
                     checkMap.put(text,c);
                     chooseCheck.getItems().add(text);
@@ -143,12 +149,14 @@ public class DepositToAccountController {
     public void onChooseDepositType(ActionEvent actionEvent) {
         checkGroup.setVisible(false);
         cashGroup.setVisible(false);
-
-        if (depositTypeBox.getValue().equals("Check")){
-            checkGroup.setVisible(true);
-        } else if(depositTypeBox.getValue().equals("Cash")){
-            cashGroup.setVisible(true);
+        if (depositTypeBox.getValue() != null){
+            if (depositTypeBox.getValue().equals("Check")){
+                checkGroup.setVisible(true);
+            } else if(depositTypeBox.getValue().equals("Cash")){
+                cashGroup.setVisible(true);
+            }
         }
+
     }
 
     @FXML
@@ -157,7 +165,7 @@ public class DepositToAccountController {
         String accountSelection = accountComboBox == null ? "" : accountComboBox.getValue();
         String amountText = depositAmountField == null ? "" : depositAmountField.getText();
         String depositType = depositTypeBox == null ? "" : depositTypeBox.getValue();
-
+        double amount;
         if (depositType == null || depositType.isBlank()) {
             if (statusLabel != null) statusLabel.setText("Please select a deposit type.");
             return;
@@ -182,8 +190,6 @@ public class DepositToAccountController {
         double previousBalance = account.getBalance();
 
         if (depositType.equals("Cash")){
-            double amount;
-
             try {
                 amount = Double.parseDouble(amountText);
             } catch (Exception e) {
@@ -197,12 +203,32 @@ public class DepositToAccountController {
             }
 
             account.deposit(amount);
+
+            if (depositAmountLabel != null) {
+                depositAmountLabel.setText("Deposit Amount: $" + String.format("%.2f", amount));
+            }
         } else if(depositType.equals("Check")){
             String checkchoice = chooseCheck ==null ? "" : chooseCheck.getValue();
 
-            if (chooseCheck == null || chooseCheck.isBlank()) {
-                if (statusLabel != null) statusLabel.setText("Please select a customer.");
+            if (checkchoice == null || checkchoice.isBlank()) {
+                if (statusLabel != null) statusLabel.setText("Please select a check.");
                 return;
+            }
+            Check check = checkMap.get(checkchoice);
+            if (check == null){
+                if (statusLabel != null) statusLabel.setText("Selected check could not be found.");
+                return;
+            }
+            if (check.getAmount() <= 0) {
+                if (statusLabel != null) statusLabel.setText("Deposit amount must be greater than zero.");
+                return;
+            }
+            if (!check.processCheck(account)){
+                if (statusLabel != null) statusLabel.setText("Check was unable to be processed");
+                return;
+            }
+            if (depositAmountLabel != null) {
+                depositAmountLabel.setText("Deposit Amount: $" + String.format("%.2f", check.getAmount()));
             }
         }
 
@@ -211,13 +237,9 @@ public class DepositToAccountController {
 
         // save updated balances back to CSV
         CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
-
+        CsvManager.writeChecksToCSV(AppState.checks);
         if (previousBalanceLabel != null) {
             previousBalanceLabel.setText("Previous Balance: $" + String.format("%.2f", previousBalance));
-        }
-
-        if (depositAmountLabel != null) {
-            depositAmountLabel.setText("Deposit Amount: $" + String.format("%.2f", amount));
         }
 
         if (newBalanceLabel != null) {

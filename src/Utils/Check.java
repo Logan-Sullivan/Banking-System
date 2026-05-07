@@ -97,20 +97,23 @@ public class Check {
 
     //verifies that sender has enough funds to process the check
     // and that the check has not already been canceled
-    public void processCheck(Account receiver){
+    public boolean processCheck(Account receiver){
         if (this.sender.getBalance() < this.amount){
             this.Status = "Cancelled";
             System.out.println("Insufficient funds, Check bounces");
+
         } else {
             if (this.Status.equals("Pending")){
                 this.Status = "Received";
                 System.out.println("Successfully deposited check ");
                 this.sender.withdraw(this.amount);
                 receiver.deposit(this.amount);
+                return true;
             } else {
                 System.out.println("Unable to process check with a status of "+this.Status);
             }
         }
+        return false;
 
     }
 

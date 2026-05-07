@@ -17,7 +17,7 @@
             <ComboBox fx:id="customerIdComboBox" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select customer name" />
         <Label layoutX="10.0" layoutY="10.0" text="Check to modify" />
             <ComboBox fx:id="CheckSelectorBox" layoutX="10.0" layoutY="37.0" onAction="#onSelectCheck" prefWidth="280.0" promptText="Select Check" />
-      <Button fx:id="cancelCheckButton" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#cancelCheck" prefHeight="41.0" prefWidth="200.0" text="Button" translateY="2.0" />
+      <Button fx:id="cancelCheckButton" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#cancelCheck" prefHeight="41.0" prefWidth="200.0" text="Cancel Check" translateY="2.0" />
     </VBox>
    <VBox prefHeight="200.0" prefWidth="100.0">
       <children>

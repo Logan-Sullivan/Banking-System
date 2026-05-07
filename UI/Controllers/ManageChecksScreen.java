@@ -40,6 +40,7 @@ public class ManageChecksScreen {
     @FXML
     public void initialize() {
         if (customerIdComboBox != null) {
+            CheckSelectorBox.getItems().clear();
             customerIdComboBox.getItems().clear();
             customerMap.clear();
             cancelCheckButton.setDisable(true);
@@ -116,7 +117,7 @@ public class ManageChecksScreen {
                 myAccounts.add(account);
             }
         }
-
+        CheckSelectorBox.getItems().clear();
         //get customers checks
         if (AppState.checks != null) {
             for (int i = 0; i < AppState.checks.size(); i++) {
@@ -125,14 +126,20 @@ public class ManageChecksScreen {
                 if (myAccounts.contains(c.getSender())){
                     String text = buildCheckDisplay(c,"To: "+c.getReceiver().lastName);
                     checkMap.put(text,c);
-                    CheckSelectorBox.getItems().add(text);
+                    if (c.getStatus().equals("Pending")){
+                        System.out.println(c.getStatus());
+                        CheckSelectorBox.getItems().add(text);
+                    }
                 }
                 //check for received checks
                 if (c.getReceiver() == customer){
                     String text = buildCheckDisplay(c,"From: "+ Objects.requireNonNull(getCustFromAccount(c.getSender())).lastName);
                     checkMap.put(text,c);
-                    CheckSelectorBox.getItems().add(text);
+                    if (c.getStatus().equals("Pending")){
+                        CheckSelectorBox.getItems().add(text);
+                    }
                 }
+
             }
         }
         ObservableList<checkRow> rowsSent = FXCollections.observableArrayList();
@@ -225,6 +232,7 @@ public class ManageChecksScreen {
         check.cancelCheck();
         Utils.CsvManager.writeChecksToCSV(AppState.checks);
 
+        CheckSelectorBox.getItems().clear();
         if (AppState.checks != null) {
             for (int i = 0; i < AppState.checks.size(); i++) {
                 Check c = AppState.checks.get(i);
@@ -232,14 +240,17 @@ public class ManageChecksScreen {
                 if (myAccounts.contains(c.getSender())){
                     String text = buildCheckDisplay(c,"To: "+c.getReceiver().lastName);
                     checkMap.put(text,c);
-                    CheckSelectorBox.getItems().add(text);
+                    if (c.getStatus().equals("Pending")){
+                        CheckSelectorBox.getItems().add(text);
+                    }
                 }
                 //check for received checks
                 if (c.getReceiver() == customer){
                     String text = buildCheckDisplay(c,"From: "+ Objects.requireNonNull(getCustFromAccount(c.getSender())).lastName);
                     checkMap.put(text,c);
-                    CheckSelectorBox.getItems().add(text);
-                }
+                    if (c.getStatus().equals("Pending")){
+                        CheckSelectorBox.getItems().add(text);
+                    }                }
             }
         }
         ObservableList<checkRow> rowsSent = FXCollections.observableArrayList();
