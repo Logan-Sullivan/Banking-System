@@ -43,19 +43,17 @@ public class Customer implements Comparable {
     }
     public double closeCustomer(){
         double totalSum=0.0;
-        // for(int i=0; i<accountList.size();i++){
-        //     totalSum += accountList.get(i).closeAccount();
-        // }
-        while(accountList.get(0)!=null){
-            totalSum += accountList.get(0).closeAccount();
-            accountList.remove(0);
+        for(int i=0; i<accountList.size();i++){
+            totalSum += accountList.get(i).closeAccount();
         }
-        // for(int i=0; i<payoffList.size();i++){
-        //     totalSum-=payoffList.get(i).closeAccount();
-        // }
-        while(accountList.get(0)!=null){
-            totalSum-=payoffList.get(0).closeAccount();
-            payoffList.remove(0);
+        for(int i=0; i<accountList.size();i++){
+            accountList.remove(i);
+        }
+        for(int i=0; i<payoffList.size();i++){
+            totalSum-=payoffList.get(i).closeAccount();
+        }
+        for(int i=0; i<payoffList.size();i++){
+            payoffList.remove(i);
         }
         return totalSum;
     }
