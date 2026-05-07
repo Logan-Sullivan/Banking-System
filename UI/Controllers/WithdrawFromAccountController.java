@@ -175,6 +175,9 @@ public class WithdrawFromAccountController {
             checking.handleOverdraft();
         }
 
+        // update TMB/GD account type immediately after withdrawal
+        CsvManager.updateCheckingAccountTypes(AppState.customers, AppState.timeline);
+
         double newBalance = account.getBalance();
 
         CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
