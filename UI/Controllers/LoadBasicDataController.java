@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LoadBasicDataController {
@@ -42,9 +43,13 @@ public class LoadBasicDataController {
         AppState.customers = new ArrayListManager<>();
         CsvManager.fetchCustsAndAccountsFromCSV(AppState.customers, path, AppState.timeline);
 
+
+        AppState.checks = new ArrayList<>();
+        CsvManager.fetchChecksFromCSV(AppState.checks,AppState.customers);
         if (statusLabel != null) {
             statusLabel.setText("Loaded " + AppState.customers.getMcount() + " customers from " + path);
         }
+        System.out.println("Loaded "+AppState.checks.size()+ " checks");
     }
 
     @FXML

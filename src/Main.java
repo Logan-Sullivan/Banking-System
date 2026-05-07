@@ -1,90 +1,88 @@
 import User_Classes.*;
 import Utils.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Scanner;
+import java.util.Random;
 
 import Account_Classes.*;
 
+import static Utils.CsvManager.writeCustomersToCsv;
+
 public class Main {
     public static void main(String[] args) {
-        //ATM Card testing
-        Customer atmTestCus = new Customer();
-        atmTestCus.accountList.add(new SavingsAccount(10.0, "daily", false, 1000.0));
-        System.out.println("Created test customer: " + atmTestCus.customerId + " with a savings account balance 1000.");
-
-        System.out.println("Attempting ATM withdraw with customer: " + atmTestCus.customerId);
-        atmTestCus.atm.ATMWithdraw(100);
-        System.out.println("New balance is: " + atmTestCus.accountList.get(0).getBalance());
-
-        System.out.println("Attempting excessive withdraws...");
-        atmTestCus.atm.ATMWithdraw(10);
-        atmTestCus.atm.ATMWithdraw(10);
-
-        System.out.println("Try to exceed account balance...");
-        atmTestCus.atm.updateTime(LocalDate.now(), 1);
-        atmTestCus.atm.ATMWithdraw(1500);
-
-        System.out.println("Now test that account search is working");
-        atmTestCus.accountList.add(new TMBAccount(null, 2000));
-        atmTestCus.atm.ATMWithdraw(1500);
-
-    }
-    public static void writeToArrayToCsv(ArrayListManager<Customer> CustomerList, String fileName){
-        try{
-            FileWriter Writer = new FileWriter(fileName);
-            for (int i = 0; i < CustomerList.getMcount(); i++) {
-                 Writer.write(CustomerList.getValue(i).LineForCSV());
+        createDummyAccounts();
+    }//end of main
+    public static void createDummyAccounts(){
+        String[] names = {"AbdulMajeed","Dhyia","Argyll","Marvellous","Alphonse","Lock","Conli","Conar","Kendall","Diarmaid","Azzedine","Aidian","Jubin","Clayton","Chin","Abdulkarem","Inan","Hassanali","Josiah","Benjamin","Jakub","Mickey","Kaid","Idrees","Jonah","Jostelle","Jaskaran","Marlon","Bradlie","Lorne","Eamonn","Coban","Finlay","Ahoua","Campbell","Brody","Jura","Callahan","Baley","Ayrton","Anmolpreet","Etienne","Nihaal","Denny","Gustav","Jody","Linden","Cal","Edwin","Mirza","Nevan","Meftah","Blyth","Kris","Lawlyn","Jasper","Kenneth","Antony","Daniil","Maddox","Harvie","Daood","Arandeep","Jebadiah","Hcen","Michee","Kadyn","Darrius","Harper","Kadyn","Cameron","Dermot","Nikos","Joash","CoreyJames","Jole","Monty","Mayson","Caethan","Awais","Evan","Bilal","Haroon","Brandon","Avinash","Corey","Kynan","Flint","Del","Caedyn","Forrest","Abu","Meko","Ayaan","Christopher","Jay","Levi","Cade","Dean","AdamJames","Jimbo"};
+        String[] Streets = {"kimbrook","walkwood","novak","oldfield","cordie lee","mont blanc","abercrombie","groveshire","kimbro","mont blanc","cape charles","leighton creek","may","great oaks","sweetwood","bow string","pawnee avenue","falling leaf","frontage","dallager","summer fields","mcclellan","cross pike","new england","island grove"};
+        String[] cities = {"Savannah","St. Joseph","Marysville","Cameron","Kansas City","Platte City"};
+        ArrayListManager<Customer> customers = new ArrayListManager<>();
+        int i = 0;
+        double balance,interestrate;
+        int accountCount,ssn,zipcode,z;
+        String state ="MO";
+        String firstName,lastName,city,address;
+        while(i <25) {
+            balance = getRandomNumberUsingNextInt(10000, 1000000)/100.0;
+            accountCount = getRandomNumberUsingNextInt(0,4);
+            ssn = getRandomNumberUsingNextInt(491000000,491999999);
+            firstName = names[getRandomNumberUsingNextInt(0,names.length-1)];
+            lastName = names[getRandomNumberUsingNextInt(0,names.length-1)];
+            address = getRandomNumberUsingNextInt(1000,5000)+" "+ Streets[getRandomNumberUsingNextInt(0,Streets.length-1)];
+            z = getRandomNumberUsingNextInt(0,cities.length-1);
+            city = cities[z];
+            interestrate = getRandomNumberUsingNextInt(0,10000)/100.0;
+            switch (z){
+                case 0 ->zipcode = 64485;
+                case 1 ->zipcode = 64504;
+                case 2 ->zipcode = 64468;
+                case 3 ->zipcode = 64429;
+                case 4 ->zipcode = 64101;
+                default ->zipcode = 64079;
             }
-            Writer.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+            Customer newcust = new Customer(Integer.toString(ssn),address,city,state,Integer.toString(zipcode),firstName,lastName,0);
+            for (int j = 0; j <= accountCount; j++) {
+                if(getRandomNumberUsingNextInt(0,1) ==0){
+                    if (balance >= 5000){
+                        int savingcheck = doeshavesaving(newcust);
+                        if( savingcheck != -1){
+                            SavingsAccount overdraft = (SavingsAccount) (newcust.accountList.get(savingcheck));
+                            newcust.accountList.add(new GDAccount(overdraft,balance,true));
+                            if (!overdraft.isOverdraftBackup()){
+                                overdraft.toggleOverdraftBackup();
+                            }
+                        } else {newcust.accountList.add(new GDAccount(null,balance,true));}
+                    } else{
+                        int savingcheck = doeshavesaving(newcust);
+                        if( savingcheck != -1){
+                            SavingsAccount overdraft = (SavingsAccount) (newcust.accountList.get(savingcheck));
+                            newcust.accountList.add(new TMBAccount(overdraft,balance));
+                            if (!overdraft.isOverdraftBackup()){
+                                overdraft.toggleOverdraftBackup();
+                            }
+                        } else newcust.accountList.add(new TMBAccount(null,balance));
+                    }
 
-    }
-
-    public static void removeCustFromArrBySSN(ArrayListManager<Customer> CustomerList, String SSN){
-        try{
-            for(int i = 0; i < CustomerList.getMcount(); i++){
-                if (CustomerList.getValue(i).customerId.equals(SSN)) {
-                    System.out.println("Removing " + CustomerList.getValue(i).firstName + " " + CustomerList.getValue(i).lastName);
-                    CustomerList.removeM(i);
-                    return;
+                } else{
+                    newcust.accountList.add(new SavingsAccount(interestrate,"14",false,balance));
                 }
-
+            }//end of for loop
+            customers.addAtFront(newcust);
+            i++;
+        }//end of while loop
+        writeCustomersToCsv(customers,new Timeline());
+    }//end of createDummyAccounts
+    public static int doeshavesaving(Customer cust){
+        for (int i = 0; i <cust.accountList.size() ; i++) {
+            if (cust.accountList.get(i) instanceof SavingsAccount){
+                return i;
             }
-        } catch (Exception e){
-            System.out.println("An error occurred.");
         }
-        System.out.println("cust not found");
+        return -1;
     }
-
-    public static void fetchCustsFromCSV(ArrayListManager<Customer> CustomerList, String fileName){
-        String SSN,Address,City,State,Zip,First,Last;
-
-        File file = new File(fileName);
-        try (Scanner fileReader = new Scanner(file)){
-            while (fileReader.hasNextLine()){
-                String text = fileReader.nextLine();
-                String[] formattedText = text.split(",");
-                SSN = formattedText[0];
-                Address = formattedText[1];
-                City = formattedText[2];
-                State = formattedText[3];
-                Zip = formattedText[4];
-                First = formattedText[5];
-                Last = formattedText[6];
-                CustomerList.addInOrder(new Customer(SSN,Address,City,State,Zip,First,Last,2));
-
-            }
-        } catch (FileNotFoundException e){
-            System.out.println("File not found");
-        }
+    public static int getRandomNumberUsingNextInt(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
     }
+}//end of class
 
-}
+

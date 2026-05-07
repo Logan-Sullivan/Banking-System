@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 import Account_Classes.*;
 
@@ -270,11 +268,9 @@ public class CsvManager {
                 StringBuilder customerBuilder = new StringBuilder();
                 customerBuilder.append(customer.customerId).append(",").append(customer.address).append(",").append(customer.city)
                         .append(",").append(customer.state).append(",").append(customer.zipcode).append(",").append(customer.firstName)
-                        // add comma before ATM withdraw count
                         .append(",").append(customer.lastName).append(",").append(customer.atm.getWithdraws()).append("\n");
 
                 for (Account account : customer.accountList){
-
                     if (account instanceof SavingsAccount saving){
                         // Ike: write full savings data so reload matches the parser format
                         customerBuilder.append(saving.getClass().getSimpleName()).append("|")
@@ -353,5 +349,64 @@ public class CsvManager {
             e.printStackTrace();
         }//end of try-catch
     }//end of writeCustomersToCsv
+
+    public static void fetchChecksFromCSV(List<Check> Checklist,ArrayListManager<Customer> CustomerList){
+        String ID,SenderID,receiverName,status;
+        Double amount;
+        Customer cust;
+        Account acc;
+        HashMap<String,Account> accountMap = new HashMap<>();
+        HashMap<String,Customer> CustomerMap = new HashMap<>();
+        //for each customer
+        for (int i = 0; i < CustomerList.getMcount(); i++) {
+            cust = CustomerList.getValue(i);
+            CustomerMap.put(cust.firstName +" "+cust.lastName,cust);
+            //for each customer's owned accounts
+            for (int j = 0; j < CustomerList.getValue(i).accountList.size(); j++) {
+                acc = CustomerList.getValue(i).accountList.get(j);
+                accountMap.put(acc.accountNumber, acc);
+            }
+        }
+        File file = new File("src/checks.csv");
+        try (Scanner fileReader = new Scanner(file)){
+            while (fileReader.hasNextLine()) {
+                String text = fileReader.nextLine();
+
+                String[] formattedText = text.split(",");
+                if (formattedText.length ==5) {
+                    SenderID = formattedText[0];
+                    receiverName = formattedText[1] + " " + formattedText[2];
+                    amount = Double.parseDouble(formattedText[3]);
+                    status = formattedText[4];
+
+                    Checklist.add(new Check(
+                            amount,
+                            (accountMap.get(SenderID)),
+                            CustomerMap.get(receiverName),
+                            status)
+                    );
+                }
+
+
+            }
+        }catch (FileNotFoundException e) {
+                System.out.println("File not found");
+                e.printStackTrace();
+            }
+    }
+
+    public static void writeChecksToCSV(List<Check> Checklist){
+        try{
+            FileWriter Writer = new FileWriter("src/checks.csv");
+            for (int i = 0; i < Checklist.size(); i++) {
+                Writer.write(Checklist.get(i).CheckCSVString());
+            }
+                Writer.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
 }
 // I really wish I used hashmaps for this, but at this point I'm limit testing myself by getting it to work

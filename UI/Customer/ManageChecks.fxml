@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="789.0" prefWidth="694.0" spacing="18.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ManageChecksScreen">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Manage Checks" />
+
+    <VBox alignment="TOP_CENTER" maxWidth="320.0" minHeight="-Infinity" prefHeight="187.0" prefWidth="320.0" spacing="10.0">
+        <Label text="Customer Name" />
+            <ComboBox fx:id="customerIdComboBox" onAction="#onCustomerChosen" prefWidth="280.0" promptText="Select customer name" />
+        <Label layoutX="10.0" layoutY="10.0" text="Check to modify" />
+            <ComboBox fx:id="CheckSelectorBox" layoutX="10.0" layoutY="37.0" onAction="#onSelectCheck" prefWidth="280.0" promptText="Select Check" />
+      <Button fx:id="cancelCheckButton" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#cancelCheck" prefHeight="41.0" prefWidth="200.0" text="Cancel Check" translateY="2.0" />
+    </VBox>
+   <VBox prefHeight="200.0" prefWidth="100.0">
+      <children>
+         <SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0" prefWidth="640.0">
+           <items>
+             <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="21.0" prefWidth="304.0">
+                  <children>
+                     <Label alignment="BOTTOM_CENTER" contentDisplay="CENTER" layoutX="118.0" text="Sent Checks" textAlignment="CENTER">
+                        <font>
+                           <Font size="15.0" />
+                        </font>
+                     </Label>
+                  </children>
+               </AnchorPane>
+             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="21.0" prefWidth="355.0">
+                  <children>
+                     <Label alignment="BOTTOM_CENTER" contentDisplay="CENTER" layoutX="103.0" text="Recieved Checks" textAlignment="CENTER">
+                        <font>
+                           <Font size="15.0" />
+                        </font>
+                     </Label>
+                  </children>
+               </AnchorPane>
+           </items>
+         </SplitPane>
+         <SplitPane dividerPositions="0.5250783699059561" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="640.0">
+            <items>
+               <TableView fx:id="sentChecks" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400" prefWidth="318.0">
+                 <columns>
+                   <TableColumn fx:id="sentRecipientName" prefWidth="120" text="Recipient" />
+                   <TableColumn fx:id="sentAmount" prefWidth="90" text="Amount" />
+                     <TableColumn fx:id="sentStatus" prefWidth="120.0" text="Status" />
+                 </columns>
+               </TableView>
+               <TableView fx:id="ReceivedChecks" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="319.0">
+                  <columns>
+                     <TableColumn fx:id="recSender" prefWidth="120.0" text="Sender" />
+                     <TableColumn fx:id="recAmount" prefWidth="90" text="Amount" />
+                     <TableColumn fx:id="recStatus" prefWidth="120.0" text="Status" />
+                  </columns>
+               </TableView>
+            </items>
+         </SplitPane>
+      </children>
+   </VBox>
+
+    <VBox alignment="CENTER" spacing="12.0" />
+     <Button onAction="#returnToCustomerScreen" prefWidth="180.0" text="Return to Customer Screen" />
+
+    <Label style="-fx-font-size: 12px;" />
+</VBox>

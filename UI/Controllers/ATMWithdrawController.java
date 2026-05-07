@@ -22,6 +22,10 @@ public class ATMWithdrawController {
     @FXML
     private ComboBox<String> customerIdComboBox;
 
+
+    @FXML
+    private ComboBox<String> accountComboBox;
+
     @FXML
     private TextField withdrawAmountField;
 
