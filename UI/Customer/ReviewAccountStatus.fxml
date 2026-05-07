@@ -2,55 +2,80 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="CENTER"
-      spacing="18.0"
+      spacing="14.0"
       xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ReviewAccountStatusController">
+
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
 
-    <Label style="-fx-font-size: 26px; -fx-font-weight: bold;" text="Review Account Status" />
+    <Label text="Review Account Status"
+           style="-fx-font-size: 26px; -fx-font-weight: bold;" />
 
-    <VBox maxWidth="320.0" spacing="10.0">
+    <VBox maxWidth="380.0" spacing="10.0">
         <Label text="Customer ID" />
-        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="280.0" />
+        <TextField fx:id="customerIdField" promptText="Enter customer ID" prefWidth="340.0" />
 
         <Label text="First Name" />
-        <TextField fx:id="firstNameField" promptText="Enter first name" prefWidth="280.0" />
+        <TextField fx:id="firstNameField" promptText="Enter first name" prefWidth="340.0" />
 
         <Label text="Last Name" />
-        <TextField fx:id="lastNameField" promptText="Enter last name" prefWidth="280.0" />
+        <TextField fx:id="lastNameField" promptText="Enter last name" prefWidth="340.0" />
     </VBox>
 
-    <VBox maxWidth="600.0" spacing="10.0">
-        <Label text="Customer Account Overview" />
+    <Label text="ATM Card Status" style="-fx-font-weight: bold;" />
+    <TextArea fx:id="atmArea"
+              prefWidth="340.0"
+              prefHeight="55.0"
+              editable="false" />
 
-        <TableView fx:id="accountTableView" prefHeight="300.0" prefWidth="550.0">
-            <columns>
-                <TableColumn fx:id="accountNumberColumn" prefWidth="150.0" text="Account Number" />
-                <TableColumn fx:id="typeColumn" prefWidth="120.0" text="Type" />
-                <TableColumn fx:id="balanceColumn" prefWidth="120.0" text="Balance" />
-                <TableColumn fx:id="statusColumn" prefWidth="120.0" text="Status" />
-            </columns>
-        </TableView>
-    </VBox>
+    <HBox spacing="15.0" alignment="CENTER">
+        <VBox spacing="8.0">
+            <Label text="Savings Accounts" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="savingsArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+
+            <Label text="TMB Checking Accounts" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="tmbArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+        </VBox>
+
+        <VBox spacing="8.0">
+            <Label text="Gold/Diamond Accounts" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="gdArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+
+            <Label text="CD Accounts" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="cdArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+        </VBox>
+
+        <VBox spacing="8.0">
+            <Label text="Credit Cards" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="creditCardArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+
+            <Label text="Loan Accounts" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="loanArea" prefWidth="330.0" prefHeight="150.0" editable="false" />
+        </VBox>
+    </HBox>
 
     <VBox alignment="CENTER" spacing="12.0">
-        <Button prefWidth="180.0"
-                text="Refresh Accounts"
+        <Button prefWidth="220.0"
+                text="Refresh Account Status"
                 onAction="#refreshAccounts" />
-        <Button prefWidth="180.0"
+
+        <Button prefWidth="220.0"
                 text="Return to Customer Screen"
                 onAction="#returnToCustomerScreen" />
     </VBox>
 
-    <Label fx:id="statusLabel" style="-fx-font-size: 12px;" text="Enter your information to view your accounts." />
+    <Label fx:id="statusLabel"
+           style="-fx-font-size: 12px;"
+           text="Select a customer to view account status." />
+
 </VBox>

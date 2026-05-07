@@ -233,9 +233,11 @@ public class DepositToAccountController {
         }
 
 
+        // update TMB/GD account type immediately after deposit
+        CsvManager.updateCheckingAccountTypes(AppState.customers, AppState.timeline);
+
         double newBalance = account.getBalance();
 
-        // save updated balances back to CSV
         CsvManager.writeCustomersToCsv(AppState.customers, AppState.timeline);
         CsvManager.writeChecksToCSV(AppState.checks);
         if (previousBalanceLabel != null) {

@@ -17,6 +17,7 @@ cannot be covered.
  */
 public class ATMCard extends TimeService {
     private Customer cus;
+    private Account acc = null;
     private int withdraws;
     
     public ATMCard(Customer cus, int withdraws){
@@ -25,20 +26,30 @@ public class ATMCard extends TimeService {
     }
 
     //Check for the best account type available, withdraw, and update the counter.
-    public void ATMWithdraw(double amt){
+    //0 is success, 1 is withdraw excess, 2 is no accounts, 3 is no valid accounts
+    public int ATMWithdraw(double amt){
         //Check if customer is over withdraw limit, return if so
         if(withdraws >= 2){
             System.out.printf("Customer %s %s has already made 2 ATM withdraws!\n",
             cus.firstName, cus.lastName);
-            return;
-        }
-        //Check if a valid account is present, return if not
-        if (cus.accountList.isEmpty()){
-            System.out.printf("Customer %s %s has no accounts!\n",
-            cus.firstName, cus.lastName);
-            return;
+            return 1;
         }
 
+        //Make sure we found an account
+        if(acc == null){
+            System.out.printf("Customer %s %s has not found an account!\n",
+            cus.firstName, cus.lastName);
+            return 2;
+        }
+
+        //Perform the withdraw
+        acc.withdraw(amt);
+        withdraws++;
+        return 0;
+    } //End of ATM withdraw method
+
+    //Method to find a viable account
+    public int findATMAccount (double amt) {
         //Determine account to use, prioritize savings if available
         Account accToUse = null;
         for (Account acc : cus.accountList){
@@ -56,24 +67,22 @@ public class ATMCard extends TimeService {
             } //End of account type check
         } //End of account list scan
 
-        //Make sure we found an account
-        if(accToUse == null){
-            System.out.printf("Customer %s %s has no compatible account!\n",
-            cus.firstName, cus.lastName);
-            return;
+        //Return 1 if we found no account, 0 otherwise
+        if (accToUse == null){
+            return 1;
+        } else {
+            this.acc = accToUse;
+            return 0;
         }
-
-        //Perform the withdraw
-        accToUse.withdraw(amt);
-        withdraws++;
-        return;
-    } //End of ATM withdraw method
+    }
 
     //Very simple, just set withdraws to zero whenever time has passed
     public void updateTime(LocalDate date, int days){
         withdraws = 0;
     }
 
-    //Getter needed for csv methods
+    //Getters
     public int getWithdraws(){return withdraws;}
+    public Account getAccount(){return acc;}
+
 } //End of ATMCard class
