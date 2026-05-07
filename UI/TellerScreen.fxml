@@ -38,6 +38,9 @@
         <Button text="Stop Payment"
                 prefWidth="280.0"
                 onAction="#goToStopPayment" />
+        <Button text="Close Account"
+                onAction="#goToCloseAccount"
+                prefWidth="280.0" />
         <Button text="Review Customer Accounts"
                 prefWidth="280.0"
                 onAction="#goToReviewCustomerAccounts" />
